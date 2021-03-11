@@ -1,0 +1,32 @@
+{
+  "assignments": [
+    {
+      "id": 19314451,
+      "start_date": "2018-11-01",
+      "end_date": "2018-11-30",
+      "allocation": 14400,
+      "notes": "Something",
+      "updated_at": "2019-04-07T16:30:46.804Z",
+      "updated_by_id": 399979,
+      "project_id": 1723252,
+      "person_id": 408190,
+      "placeholder_id": 123456,
+      "repeated_assignment_set_id": 1234,
+      "active_on_days_off": false
+    },
+    {
+      "id": 19314451,
+      "start_date": "2018-11-01",
+      "end_date": "2018-11-30",
+      "allocation": 14400,
+      "notes": null,
+      "updated_at": "2019-04-07T16:30:46.804Z",
+      "updated_by_id": 399979,
+      "project_id": 1723252,
+      "person_id": null,
+      "placeholder_id": null,
+      "repeated_assignment_set_id": null,
+      "active_on_days_off": false
+    }
+  ]
+}

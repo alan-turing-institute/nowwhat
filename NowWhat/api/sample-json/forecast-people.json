@@ -1,0 +1,66 @@
+{
+  "people": [
+    {
+      "id": 123456,
+      "first_name": "Foo",
+      "last_name": "Bar",
+      "email": "foobar@turing.ac.uk",
+      "login": "enabled",
+      "admin": false,
+      "archived": false,
+      "subscribed": true,
+      "avatar_url": "https://someurl.com",
+      "roles": [
+        "REG Permanent",
+        "REG Junior",
+        "Junior Research Software Engineer"
+      ],
+      "updated_at": "2020-10-07T12:31:29.260Z",
+      "updated_by_id": 123456,
+      "harvest_user_id": 123456,
+      "weekly_capacity": 144000,
+      "working_days": {
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "saturday": false,
+        "sunday": false
+      },
+      "color_blind": false,
+      "personal_feed_token_id": 1234
+    },
+    {
+      "id": 123456,
+      "first_name": "James",
+      "last_name": "Bond",
+      "email": null,
+      "login": "enabled",
+      "admin": false,
+      "archived": false,
+      "subscribed": true,
+      "avatar_url": "https://someurl.com",
+      "roles": [
+        "REG Permanent",
+        "REG Junior",
+        "Junior Research Software Engineer"
+      ],
+      "updated_at": "2020-10-07T12:31:29.260Z",
+      "updated_by_id": 123456,
+      "harvest_user_id": null,
+      "weekly_capacity": null,
+      "working_days": {
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "saturday": false,
+        "sunday": false
+      },
+      "color_blind": null,
+      "personal_feed_token_id": null
+    }
+  ]
+}

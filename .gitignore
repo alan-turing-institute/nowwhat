@@ -1,0 +1,10 @@
+credentials.sh
+playground.fsx
+.DS_Store
+.fake
+.ionide
+
+Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/

@@ -1,0 +1,45 @@
+{
+  "data": {
+    "repository": {
+      "projects": {
+        "edges": [
+          {
+            "node": {
+              "number": 2,
+              "name": "Project Tracker",
+              "columns": {
+                "edges": [
+                  {
+                    "node": {
+                      "name": "Suggested",
+                      "cards": {
+                        "edges": [
+                          {
+                            "cursor": "MQ",
+                            "node": {
+                              "id": "ABCD=+123456DYXJkMjI0MjEwOTk=",
+                              "note": null,
+                              "state": "CONTENT_ONLY",
+                              "content": {
+                                "id": "ABCD=+123456",
+                                "number": 1,
+                                "title": "Some project name here",
+                                "url": "https://github.com/alan-turing-institute/Hut23/issues/1",
+                                "body": "Some project description here",
+                                "state": "OPEN"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

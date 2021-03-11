@@ -1,0 +1,14 @@
+{
+  "placeholders": [
+    {
+      "id": 23092,
+      "name": "Placeholder name",
+      "archived": false,
+      "roles": [
+        "Placeholder"
+      ],
+      "updated_at": "2021-02-18T18:24:30.000Z",
+      "updated_by_id": 408185
+    }
+  ]
+}
