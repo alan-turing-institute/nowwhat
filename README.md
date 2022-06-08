@@ -27,14 +27,12 @@ an authentication token you will need to log in to @emph{Harvest} and look for
 the ``Developers'' section, within which there will be an option to obtain a
 ``Personal Access Token.'
 
-### Build
+### Building, running and testing
+
+Try the following:
 
 ```
 dotnet build
-```
-
-## Running the tool
-
-```
 dotnet run
+dotnet test
 ```
