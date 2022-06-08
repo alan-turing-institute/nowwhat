@@ -19,7 +19,6 @@ jobs:
         dotnet-version: 6.0.x
     - name: Test
       run: |
-        pushd NowWhat
         dotnet tool restore
         popd
         cd Test
