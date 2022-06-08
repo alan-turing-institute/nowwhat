@@ -4,9 +4,6 @@ open FSharp.Data
 open HttpFs.Client
 open Hopac
 
-open NowWhat
-open NowWhat.API
-
 let [<Literal>] HarvestUrl = "https://api.harvestapp.com/api/v2/"
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
@@ -14,7 +11,7 @@ let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 let accountId = System.Environment.GetEnvironmentVariable "FORECASTID"
 let personalAccessToken = System.Environment.GetEnvironmentVariable "FORECASTTOKEN"
 
-let forecastRequest endpoint = 
+let forecastRequest endpoint =
   Request.createUrl Get (ForecastUrl + endpoint)
   |> Request.setHeader (Authorization ("Bearer " + personalAccessToken))
   |> Request.setHeader (Custom ("Forecast-Account-ID", accountId))
