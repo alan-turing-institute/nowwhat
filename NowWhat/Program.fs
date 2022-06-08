@@ -1,5 +1,3 @@
-// Learn more about F# at http://docs.microsoft.com/dotnet/fsharp
-
 open System
 open NowWhat.API
 
@@ -7,8 +5,8 @@ let checkEnvironmentVariables () =
   let env = System.Environment.GetEnvironmentVariables()
 
   (true, ["GITHUBID"; "GITHUBTOKEN"; "FORECASTID"; "FORECASTTOKEN"])
-  ||> List.fold (fun allExist variable -> 
-    if not (env.Contains variable) then 
+  ||> List.fold (fun allExist variable ->
+    if not (env.Contains variable) then
       printfn $"Please set environment variable {variable}."
       false
     else
@@ -20,7 +18,7 @@ let main argv =
 
     if checkEnvironmentVariables() then
 
-      let githubIssues = 
+      let githubIssues =
         Github.ProjectBoard
         |> Github.getAllProjectIssues
         |> snd
@@ -31,4 +29,4 @@ let main argv =
       let forecastProjects = Forecast.getProjects ()
       printfn "Number of projects in Forecast: %d" (forecastProjects.Projects |> Seq.length)
 
-    0 // return an integer exit code
+    0
