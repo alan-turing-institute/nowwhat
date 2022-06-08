@@ -1,7 +1,7 @@
 # Now What?
 ## REG project tracking tool
 
-Reimagination of [whatnow](https://github.com/alan-turing-institute/whatnow).
+Reimagination of [whatnow](https://github.com/alan-turing-institute/whatnow), also borrowing from [whatnext](https://github.com/alan-turing-institute/whatnext).
 
 ## Prerequisites
 
