@@ -29,10 +29,14 @@ the ``Developers'' section, within which there will be an option to obtain a
 
 ### Building, running and testing
 
-Try the following:
+To build or run, use following commands the `NowWhat` folder:
 
 ```
 dotnet build
 dotnet run
+```
+
+To test, use the following in the `Test` folder:
+```
 dotnet test
 ```

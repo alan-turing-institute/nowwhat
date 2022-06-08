@@ -18,6 +18,6 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - run: |
-        cd NowWhat
+        cd Test
         dotnet tool restore
         dotnet test
