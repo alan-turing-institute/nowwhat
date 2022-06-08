@@ -20,6 +20,5 @@ jobs:
     - name: Test
       run: |
         dotnet tool restore
-        popd
         cd Test
         dotnet test
