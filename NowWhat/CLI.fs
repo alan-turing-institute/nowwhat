@@ -19,16 +19,15 @@ let checkEnvironmentVariables (envVars: string List) =
 let nowwhat argv =
     printfn "Now what?"
 
-    if checkEnvironmentVariables (gitHubVars @ forecastVars) then
-
+    if checkEnvironmentVariables gitHubVars then
       let githubIssues =
         Github.ProjectBoard
         |> Github.getAllProjectIssues
         |> snd
         |> Array.filter (fun (number, title, status, _) -> status = "OPEN")
-
       printfn "Number of open issues in Project tracker: %d" githubIssues.Length
 
+    if checkEnvironmentVariables forecastVars then
       let forecastProjects = Forecast.getProjects ()
       printfn "Number of projects in Forecast: %d" (forecastProjects.Projects |> Seq.length)
 
