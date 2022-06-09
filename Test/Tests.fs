@@ -24,4 +24,4 @@ let noEnvVars (): unit =
         File.Delete(foundFile)
     else
         printfn $"{testName}: failed.\nFound:\n{found}\nExpected:\n{expected}"
-    Assert.True(equal)
+    Assert.Equal(expected, found)
