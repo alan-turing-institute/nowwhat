@@ -2,10 +2,12 @@ module NowWhat.CLI
 
 open NowWhat.API
 
+let envVars = ["GITHUBID"; "GITHUBTOKEN"; "FORECASTID"; "FORECASTTOKEN"]
+
 let checkEnvironmentVariables () =
   let env = System.Environment.GetEnvironmentVariables()
 
-  (true, ["GITHUBID"; "GITHUBTOKEN"; "FORECASTID"; "FORECASTTOKEN"])
+  (true, envVars)
   ||> List.fold (fun allExist variable ->
     if not (env.Contains variable) then
       printfn $"Please set environment variable {variable}."

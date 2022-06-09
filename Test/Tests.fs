@@ -13,6 +13,8 @@ let noEnvVars (): unit =
     let foundFile: string = $"{folder}/{testName}.new.{ext}"
     let writer = new StreamWriter(foundFile)
     Console.SetOut(writer)
+    for envVar in envVars do
+        Environment.SetEnvironmentVariable(envVar, "")
     nowwhat () |> ignore
     writer.Flush()
     let expectedFile: string = $"{folder}/{testName}.{ext}"
