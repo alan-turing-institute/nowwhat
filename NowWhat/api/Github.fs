@@ -39,7 +39,7 @@ let getAllProjectIssues projectName =
   // the parent function is only wrapping up the recursive call that deals with paging of the responses
 
   let rec getProjectIssues projectName cursor acc =
-    let queryTemplate = System.IO.File.ReadAllText "api/queries/issues-by-project-graphql.json"
+    let queryTemplate = System.IO.File.ReadAllText "../../../../NowWhat/api/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
     let query =
