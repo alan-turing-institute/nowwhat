@@ -9,9 +9,19 @@ open NowWhat.CLI
 let noEnvVars (): unit =
     let testName: string = "noEnvVars"
     let folder: string = "../../../expected/"
-    let writer = new StreamWriter($"{folder}/{testName}.new.txt")
+    let ext: string = "txt"
+    let foundFile: string = $"{folder}/{testName}.new.{ext}"
+    let writer = new StreamWriter(foundFile)
     Console.SetOut(writer)
     nowwhat () |> ignore
     writer.Flush()
-    let expected: string = File.ReadAllText($"{folder}/{testName}.txt")
-    Assert.True(true)
+    let expectedFile: string = $"{folder}/{testName}.{ext}"
+    let expected: string = File.ReadAllText(expectedFile)
+    let found: string = File.ReadAllText(foundFile)
+    let equal: bool = expected = found
+    if equal then
+        printfn $"{testName}: passed."
+        File.Delete(foundFile)
+    else
+        printfn $"{testName}: failed.\nFound:\n{found}\nExpected:\n{expected}"
+    Assert.True(equal)
