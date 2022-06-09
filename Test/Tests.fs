@@ -6,10 +6,12 @@ open Xunit
 open NowWhat.CLI
 
 [<Fact>]
-let noEnvVars () =
-    printfn $"Current directory {Environment.CurrentDirectory}"
-    let writer = new StreamWriter("../../../expected/noEnvVars.new.txt")
+let noEnvVars (): unit =
+    let testName: string = "noEnvVars"
+    let folder: string = "../../../expected/"
+    let writer = new StreamWriter($"{folder}/{testName}.new.txt")
     Console.SetOut(writer)
     nowwhat () |> ignore
     writer.Flush()
+    let expected: string = File.ReadAllText($"{folder}/{testName}.txt")
     Assert.True(true)
