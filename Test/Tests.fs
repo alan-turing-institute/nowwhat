@@ -5,17 +5,14 @@ open System.IO
 open Xunit
 open NowWhat.CLI
 
-[<Fact>]
-let noEnvVars (): unit =
-    let testName: string = "noEnvVars"
+// look for a more Xunit-idiomatic way of doing this
+let test (testName: string) (doTest: unit -> unit): unit =
     let folder: string = "../../../expected/"
     let ext: string = "txt"
     let foundFile: string = $"{folder}/{testName}.new.{ext}"
     let writer = new StreamWriter(foundFile)
     Console.SetOut(writer)
-    for envVar in gitHubVars @ forecastVars do
-        Environment.SetEnvironmentVariable(envVar, "")
-    nowwhat () |> ignore
+    doTest()
     writer.Flush()
     let expectedFile: string = $"{folder}/{testName}.{ext}"
     let expected: string = File.ReadAllText(expectedFile)
@@ -27,3 +24,11 @@ let noEnvVars (): unit =
     else
         printfn $"{testName}: failed.\nFound:\n{found}\nExpected:\n{expected}"
     Assert.Equal(expected, found)
+
+[<Fact>]
+let noEnvVars (): unit =
+    test "noEnvVars" (fun () ->
+        for envVar in gitHubVars @ forecastVars do
+            Environment.SetEnvironmentVariable(envVar, "")
+        nowwhat () |> ignore
+    )
