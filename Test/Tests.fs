@@ -15,7 +15,8 @@ let test (testName: string) (doTest: unit -> unit): unit =
     doTest()
     writer.Flush()
     let expectedFile: string = $"{folder}/{testName}.{ext}"
-    let expected: string = File.ReadAllText(expectedFile)
+    let expected: string =
+        if File.Exists(expectedFile) then File.ReadAllText(expectedFile) else ""
     let found: string = File.ReadAllText(foundFile)
     let equal: bool = expected = found
     if equal then
@@ -26,9 +27,15 @@ let test (testName: string) (doTest: unit -> unit): unit =
     Assert.Equal(expected, found)
 
 [<Fact>]
-let noEnvVars (): unit =
+let test_noEnvVars (): unit =
     test "noEnvVars" (fun () ->
         for envVar in gitHubVars @ forecastVars do
             Environment.SetEnvironmentVariable(envVar, "")
+        nowwhat () |> ignore
+    )
+
+[<Fact>]
+let test_GitHub (): unit =
+    test "GitHub" (fun () ->
         nowwhat () |> ignore
     )
