@@ -10,10 +10,16 @@ let test (testName: string) (doTest: unit -> unit): unit =
     let folder: string = "../../../expected/"
     let ext: string = "txt"
     let foundFile: string = $"{folder}/{testName}.new.{ext}"
+
     let writer = new StreamWriter(foundFile)
     Console.SetOut(writer)
+
     doTest()
+
     writer.Flush()
+    let stdout = new StreamWriter(Console.OpenStandardOutput())
+    Console.SetOut(stdout)
+
     let expectedFile: string = $"{folder}/{testName}.{ext}"
     let expected: string =
         if File.Exists(expectedFile) then File.ReadAllText(expectedFile) else ""
@@ -24,6 +30,7 @@ let test (testName: string) (doTest: unit -> unit): unit =
         File.Delete(foundFile)
     else
         printfn $"{testName}: failed.\nFound:\n{found}\nExpected:\n{expected}"
+    stdout.Flush()
     Assert.Equal(expected, found)
 
 [<Fact>]
