@@ -4,7 +4,6 @@ open NowWhat.API
 
 let gitHubVars = ["GITHUBID"; "GITHUBTOKEN"]
 let forecastVars = ["FORECASTID"; "FORECASTTOKEN"]
-let envVars = gitHubVars @ forecastVars
 
 let checkEnvironmentVariables (envVars: string List) =
   let env = System.Environment.GetEnvironmentVariables()
@@ -20,7 +19,7 @@ let checkEnvironmentVariables (envVars: string List) =
 let nowwhat argv =
     printfn "Now what?"
 
-    if checkEnvironmentVariables envVars then
+    if checkEnvironmentVariables (gitHubVars @ forecastVars) then
 
       let githubIssues =
         Github.ProjectBoard
