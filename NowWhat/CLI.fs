@@ -6,7 +6,7 @@ let gitHubVars = ["GITHUBID"; "GITHUBTOKEN"]
 let forecastVars = ["FORECASTID"; "FORECASTTOKEN"]
 let envVars = gitHubVars @ forecastVars
 
-let checkEnvironmentVariables () =
+let checkEnvironmentVariables (envVars: string List) =
   let env = System.Environment.GetEnvironmentVariables()
 
   (true, envVars)
@@ -20,7 +20,7 @@ let checkEnvironmentVariables () =
 let nowwhat argv =
     printfn "Now what?"
 
-    if checkEnvironmentVariables() then
+    if checkEnvironmentVariables envVars then
 
       let githubIssues =
         Github.ProjectBoard
