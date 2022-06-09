@@ -1,0 +1,5 @@
+Now what?
+Please set environment variable GITHUBID.
+Please set environment variable GITHUBTOKEN.
+Please set environment variable FORECASTID.
+Please set environment variable FORECASTTOKEN.
