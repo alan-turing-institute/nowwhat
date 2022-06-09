@@ -3,7 +3,8 @@ module NowWhat.CLI
 open NowWhat.API
 
 let gitHubVars = ["GITHUBID"; "GITHUBTOKEN"]
-let envVars = gitHubVars @ ["FORECASTID"; "FORECASTTOKEN"]
+let forecastVars = ["FORECASTID"; "FORECASTTOKEN"]
+let envVars = gitHubVars @ forecastVars
 
 let checkEnvironmentVariables () =
   let env = System.Environment.GetEnvironmentVariables()
