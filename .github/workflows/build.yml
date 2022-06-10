@@ -17,7 +17,11 @@ jobs:
     - uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
-    - name: Test
+    - name: Check `dotnet run`
+      run: |
+        cd NowWhat
+        dotnet run
+    - name: Test suite
       run: |
         dotnet tool restore
         cd Test
