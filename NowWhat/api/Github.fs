@@ -27,7 +27,7 @@ let runGithubQuery gitHubToken body =
   |> Request.createUrl Post
   |> Request.setHeader (Authorization $"bearer {gitHubToken}")
   |> Request.setHeader (UserAgent "NowWhat")
-  |> Request.body (RequestBody.BodyString body)
+  |> Request.body (BodyString body)
   |> Request.responseAsString // UTF8-encoded
   |> run
 
@@ -83,7 +83,7 @@ let getAllProjectIssues projectName =
 
   getProjectIssues projectName None (None, [||])
 
-let getIssueDetails issueNumber =
+let getIssueDetails (gitHubToken: string) issueNumber =
     let queryTemplate = System.IO.File.ReadAllText "api/queries/issue-details-graphql.json"
 
     // fill in placeholders into the query - issue number
@@ -91,7 +91,7 @@ let getIssueDetails issueNumber =
       queryTemplate.Replace("ISSUENUMBER", $"{issueNumber}")
       |> formatQuery
 
-    let result = runGithubQuery personalAccessToken query
+    let result = runGithubQuery gitHubToken query
 
     // parse the response using the type provider
     let issues = IssueDetailsFromGraphQL.Parse result
