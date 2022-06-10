@@ -53,7 +53,7 @@ let test_noEnvVars (): unit =
     )
 
 [<Fact>]
-let test_GitHub (): unit =
-    test "GitHub" (fun () ->
+let test_withEnvVars (): unit =
+    test "withEnvVars" (fun () ->
         nowwhat () |> ignore
     )
