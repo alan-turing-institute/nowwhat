@@ -26,7 +26,7 @@ let allProjectBoards = [
 let runGithubQuery body =
   GithubGraphQLEndpoint
   |> Request.createUrl Post
-  |> Request.basicAuthentication accountId personalAccessToken
+  |> Request.setHeader (Authorization $"bearer {personalAccessToken}")
   |> Request.setHeader (UserAgent "NowWhat")
   |> Request.body (RequestBody.BodyString body)
   |> Request.responseAsString // UTF8-encoded
