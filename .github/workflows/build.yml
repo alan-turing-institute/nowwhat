@@ -21,4 +21,4 @@ jobs:
       run: |
         dotnet tool restore
         cd Test
-        GITHUBTOKEN=${{secrets.NOWWHAT_GITHUB_TOKEN}} dotnet test
+        NOWWHAT_GITHUB_TOKEN=${{secrets.NOWWHAT_GITHUB_TOKEN}} dotnet test

@@ -3,7 +3,7 @@ module NowWhat.CLI
 open NowWhat.API
 
 let envVars = {|
-  gitHub = "GITHUBTOKEN";
+  gitHub = "NOWWHAT_GITHUB_TOKEN";
   forecastId = "FORECASTID";
   forecastToken = "FORECASTTOKEN"
 |}
