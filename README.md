@@ -21,8 +21,7 @@ Run the tool with the following environment variables set. [How to store sensiti
 - `NOWWHAT_GITHUB_TOKEN` - Github [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
 - `FORECASTID` - most easily found by logging in via web interface and
 reading number that appears in URL just after server name
-- `FORECASTTOKEN` - to obtain an authentication token, log in to Harvest}and look for
-the _Developers_ section; there will be an option to obtain a Personal Access Token
+- `FORECASTTOKEN` - log into Forecast, go to My Profile and then Developers section; there will be an option to obtain a Personal Access Token
 
 ### Building, running and testing
 
