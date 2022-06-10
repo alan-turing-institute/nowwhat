@@ -22,10 +22,10 @@ let allProjectBoards = [
 /// Query Github GraphQL endpoint
 /// body is json with GraphQL query element
 /// https://docs.github.com/en/graphql/guides/forming-calls-with-graphql#communicating-with-graphql
-let runGithubQuery body =
+let runGithubQuery gitHubToken body =
   GithubGraphQLEndpoint
   |> Request.createUrl Post
-  |> Request.setHeader (Authorization $"bearer {personalAccessToken}")
+  |> Request.setHeader (Authorization $"bearer {gitHubToken}")
   |> Request.setHeader (UserAgent "NowWhat")
   |> Request.body (RequestBody.BodyString body)
   |> Request.responseAsString // UTF8-encoded
@@ -53,7 +53,7 @@ let getAllProjectIssues projectName =
       cursorQuery.Replace("PROJECTNAME", $"\\\"{projectName}\\\"")
       |> formatQuery
 
-    let result = runGithubQuery query
+    let result = runGithubQuery personalAccessToken query
 
     // parse the response using the type provider
     let issues = ProjectIssuesFromGraphQL.Parse result
@@ -78,7 +78,7 @@ let getAllProjectIssues projectName =
           |> fun (number, title, state, c) -> Some c
 
     match nextCursor with
-    | Some c -> getProjectIssues projectName nextCursor (Some proj, Array.append (snd acc) issueData)
+    | Some _ -> getProjectIssues projectName nextCursor (Some proj, Array.append (snd acc) issueData)
     | None -> (Some proj, Array.append (snd acc) issueData)
 
   getProjectIssues projectName None (None, [||])
@@ -91,7 +91,7 @@ let getIssueDetails issueNumber =
       queryTemplate.Replace("ISSUENUMBER", $"{issueNumber}")
       |> formatQuery
 
-    let result = runGithubQuery query
+    let result = runGithubQuery personalAccessToken query
 
     // parse the response using the type provider
     let issues = IssueDetailsFromGraphQL.Parse result
