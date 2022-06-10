@@ -31,7 +31,7 @@ let nowwhat argv =
         Github.ProjectBoard
         |> Github.getAllProjectIssues gitHubToken
         |> snd
-        |> Array.filter (fun (number, title, status, _) -> status = "OPEN")
+        |> Array.filter (fun (_, _, status, _) -> status = "OPEN")
       printfn "Number of open issues in Project tracker: %d" githubIssues.Length
 
     if checkEnvironmentVariables forecastVars then
