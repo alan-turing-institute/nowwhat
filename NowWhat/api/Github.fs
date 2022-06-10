@@ -22,7 +22,7 @@ let allProjectBoards = [
 /// Query Github GraphQL endpoint
 /// body is json with GraphQL query element
 /// https://docs.github.com/en/graphql/guides/forming-calls-with-graphql#communicating-with-graphql
-let runGithubQuery gitHubToken body =
+let runGithubQuery (gitHubToken: string) body =
   GithubGraphQLEndpoint
   |> Request.createUrl Post
   |> Request.setHeader (Authorization $"bearer {gitHubToken}")
@@ -34,7 +34,7 @@ let runGithubQuery gitHubToken body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
-let getAllProjectIssues projectName =
+let getAllProjectIssues (gitHubToken: string) projectName =
   // the parent function is only wrapping up the recursive call that deals with paging of the responses
 
   let rec getProjectIssues projectName cursor acc =
@@ -53,7 +53,7 @@ let getAllProjectIssues projectName =
       cursorQuery.Replace("PROJECTNAME", $"\\\"{projectName}\\\"")
       |> formatQuery
 
-    let result = runGithubQuery personalAccessToken query
+    let result = runGithubQuery gitHubToken query
 
     // parse the response using the type provider
     let issues = ProjectIssuesFromGraphQL.Parse result

@@ -26,9 +26,10 @@ let nowwhat argv =
     printfn "Now what?"
 
     if checkEnvironmentVariables gitHubVars then
+      let gitHubToken = System.Environment.GetEnvironmentVariable(envVars.gitHub)
       let githubIssues =
         Github.ProjectBoard
-        |> Github.getAllProjectIssues
+        |> Github.getAllProjectIssues gitHubToken
         |> snd
         |> Array.filter (fun (number, title, status, _) -> status = "OPEN")
       printfn "Number of open issues in Project tracker: %d" githubIssues.Length
