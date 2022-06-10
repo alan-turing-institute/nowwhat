@@ -35,7 +35,9 @@ let nowwhat argv =
       printfn "Number of open issues in Project tracker: %d" githubIssues.Length
 
     if checkEnvironmentVariables forecastVars then
-      let forecastProjects = Forecast.getProjects ()
+      let forecastId = System.Environment.GetEnvironmentVariable(envVars.forecastId)
+      let forecastToken = System.Environment.GetEnvironmentVariable(envVars.forecastToken)
+      let forecastProjects = Forecast.getProjects forecastId forecastToken
       printfn "Number of projects in Forecast: %d" (forecastProjects.Projects |> Seq.length)
 
     0

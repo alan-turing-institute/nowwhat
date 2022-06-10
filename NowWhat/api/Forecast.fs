@@ -6,12 +6,9 @@ open Hopac
 
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
-let accountId = System.Environment.GetEnvironmentVariable "FORECASTID"
-let personalAccessToken = System.Environment.GetEnvironmentVariable "FORECASTTOKEN"
-
-let forecastRequest endpoint =
+let forecastRequest (accountId: string) (forecastToken: string) endpoint =
   Request.createUrl Get (ForecastUrl + endpoint)
-  |> Request.setHeader (Authorization ("Bearer " + personalAccessToken))
+  |> Request.setHeader (Authorization ("Bearer " + forecastToken))
   |> Request.setHeader (Custom ("Forecast-Account-ID", accountId))
   |> Request.responseAsString // UTF8-encoded
   |> run
@@ -25,8 +22,13 @@ type Placeholders = JsonProvider<"api/sample-json/forecast-placeholders.json">
 type Projects = JsonProvider<"api/sample-json/forecast-projects.json">
 
 // Forecast endpoints
-let getPeople () = forecastRequest "people" |> People.Parse
-let getAssignments () = forecastRequest "assignments" |> Assignments.Parse
-let getClients () = forecastRequest "clients" |> Clients.Parse
-let getPlaceholders () = forecastRequest "placeholders" |> Placeholders.Parse
-let getProjects () = forecastRequest "projects" |> Projects.Parse
+let getPeople (accountId: string) (forecastToken: string) =
+  forecastRequest accountId forecastToken "people" |> People.Parse
+let getAssignments (accountId: string) (forecastToken: string) =
+  forecastRequest accountId forecastToken "assignments" |> Assignments.Parse
+let getClients (accountId: string) (forecastToken: string) =
+  forecastRequest accountId forecastToken "clients" |> Clients.Parse
+let getPlaceholders (accountId: string) (forecastToken: string) =
+  forecastRequest accountId forecastToken "placeholders" |> Placeholders.Parse
+let getProjects (accountId: string) (forecastToken: string) =
+  forecastRequest accountId forecastToken "projects" |> Projects.Parse
