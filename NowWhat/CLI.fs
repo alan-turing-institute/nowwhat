@@ -4,11 +4,12 @@ open NowWhat.API
 
 let envVars = {|
   gitHub = "GITHUBTOKEN";
-  forecastId = "FORECASTID"
+  forecastId = "FORECASTID";
+  forecastToken = "FORECASTTOKEN"
 |}
 
 let gitHubVars = [envVars.gitHub]
-let forecastVars = [envVars.forecastId; "FORECASTTOKEN"]
+let forecastVars = [envVars.forecastId; envVars.forecastToken]
 
 let checkEnvironmentVariables (envVars: string List) =
   let env = System.Environment.GetEnvironmentVariables()

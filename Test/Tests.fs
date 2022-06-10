@@ -38,13 +38,13 @@ let test_noEnvVars (): unit =
     test "noEnvVars" (fun () ->
         let gitHubToken = Environment.GetEnvironmentVariable(envVars.gitHub)
         let forecastId = Environment.GetEnvironmentVariable(envVars.forecastId)
-        let forecastToken = Environment.GetEnvironmentVariable("FORECASTTOKEN")
+        let forecastToken = Environment.GetEnvironmentVariable(envVars.forecastToken)
         for envVar in gitHubVars @ forecastVars do
             Environment.SetEnvironmentVariable(envVar, "")
         nowwhat () |> ignore
         Environment.SetEnvironmentVariable(envVars.gitHub, gitHubToken)
         Environment.SetEnvironmentVariable(envVars.forecastId, forecastId)
-        Environment.SetEnvironmentVariable("FORECASTTOKEN", forecastToken)
+        Environment.SetEnvironmentVariable(envVars.forecastToken, forecastToken)
     )
 
 [<Fact>]
