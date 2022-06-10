@@ -15,17 +15,13 @@ Run [`script/dev-setup.sh`](script/dev-setup.sh) from project root.
 
 ### Environment variables
 
-Create the following environment variables before running the tool:
+Run the tool with the following environment variables set. [How to store sensitive environment variables on MacOS](https://medium.com/@johnjjung/how-to-store-sensitive-environment-variables-on-macos-76bd5ba464f6) may be useful.
 
-- `GITHUBID` - your Github ID
 - `GITHUBTOKEN` - Github [personal access token for the application](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
-- `FORECASTID` -
-- `FORECASTTOKEN` -
-The account id is most easily found by logging in via the web interface and
-reading the number that appears in the URL just after the server name. To obtain
-an authentication token you will need to log in to @emph{Harvest} and look for
-the ``Developers'' section, within which there will be an option to obtain a
-``Personal Access Token.'
+- `FORECASTID` - most easily found by logging in via web interface and
+reading number that appears in URL just after server name
+- `FORECASTTOKEN` - to obtain an authentication token, log in to Harvest}and look for
+the _Developers_ section; there will be an option to obtain a Personal Access Token
 
 ### Building, running and testing
 
