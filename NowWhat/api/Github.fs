@@ -9,7 +9,6 @@ type IssueDetailsFromGraphQL = JsonProvider<"api/sample-json/gh-issue-details.js
 
 let [<Literal>] GithubGraphQLEndpoint = "https://api.github.com/graphql"
 
-let accountId = System.Environment.GetEnvironmentVariable "GITHUBID"
 let personalAccessToken = System.Environment.GetEnvironmentVariable "GITHUBTOKEN"
 
 let [<Literal>] ProjectBoard = "Project Tracker"

@@ -2,7 +2,7 @@ module NowWhat.CLI
 
 open NowWhat.API
 
-let gitHubVars = ["GITHUBID"; "GITHUBTOKEN"]
+let gitHubVars = ["GITHUBTOKEN"]
 let forecastVars = ["FORECASTID"; "FORECASTTOKEN"]
 
 let checkEnvironmentVariables (envVars: string List) =

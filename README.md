@@ -17,7 +17,6 @@ Run [`script/dev-setup.sh`](script/dev-setup.sh) from project root.
 
 Run the tool with the following environment variables set. [How to store sensitive environment variables on MacOS](https://medium.com/@johnjjung/how-to-store-sensitive-environment-variables-on-macos-76bd5ba464f6) may be useful.
 
-- `GITHUBID` - your Github ID
 - `GITHUBTOKEN` - Github [personal access token for the application](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
 - `FORECASTID` - most easily found by logging in via web interface and
 reading number that appears in URL just after server name
