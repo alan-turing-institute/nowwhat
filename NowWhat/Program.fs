@@ -1,3 +1,5 @@
+open NowWhat.CLI
+
 [<EntryPoint>]
 let main argv =
-  0
+  nowwhat argv
