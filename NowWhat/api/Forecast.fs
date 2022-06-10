@@ -4,10 +4,8 @@ open FSharp.Data
 open HttpFs.Client
 open Hopac
 
-let [<Literal>] HarvestUrl = "https://api.harvestapp.com/api/v2/"
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
-//let accountId = "968445" // for Harvest
 let accountId = System.Environment.GetEnvironmentVariable "FORECASTID"
 let personalAccessToken = System.Environment.GetEnvironmentVariable "FORECASTTOKEN"
 
