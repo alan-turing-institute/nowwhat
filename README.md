@@ -5,7 +5,8 @@ Reimagination of [whatnow](https://github.com/alan-turing-institute/whatnow), al
 
 ## Prerequisites
 
-- [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [.NET Core SDK 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [.NET Core 3.1 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/3.1/runtime?cid=getdotnetcore)
 
 ## Setup
 
