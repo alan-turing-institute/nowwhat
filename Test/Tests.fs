@@ -36,13 +36,13 @@ let test (testName: string) (doTest: unit -> unit): unit =
 [<Fact>]
 let test_noEnvVars (): unit =
     test "noEnvVars" (fun () ->
-        let gitHubToken = Environment.GetEnvironmentVariable("GITHUBTOKEN")
+        let gitHubToken = Environment.GetEnvironmentVariable(envVars.gitHub)
         let forecastId = Environment.GetEnvironmentVariable("FORECASTID")
         let forecastToken = Environment.GetEnvironmentVariable("FORECASTTOKEN")
         for envVar in gitHubVars @ forecastVars do
             Environment.SetEnvironmentVariable(envVar, "")
         nowwhat () |> ignore
-        Environment.SetEnvironmentVariable("GITHUBTOKEN", gitHubToken)
+        Environment.SetEnvironmentVariable(envVars.gitHub, gitHubToken)
         Environment.SetEnvironmentVariable("FORECASTID", forecastId)
         Environment.SetEnvironmentVariable("FORECASTTOKEN", forecastToken)
     )
