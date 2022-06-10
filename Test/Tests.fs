@@ -13,12 +13,16 @@ let test (testName: string) (doTest: unit -> unit): unit =
 
     let writer = new StreamWriter(foundFile)
     Console.SetOut(writer)
+    let restoreDir = Directory.GetCurrentDirectory()
+    Directory.SetCurrentDirectory("../../../../NowWhat")
 
-    doTest()
-
-    writer.Flush()
-    let stdout = new StreamWriter(Console.OpenStandardOutput())
-    Console.SetOut(stdout)
+    try
+        doTest()
+    finally
+        Directory.SetCurrentDirectory(restoreDir)
+        writer.Flush()
+        let stdout = new StreamWriter(Console.OpenStandardOutput())
+        Console.SetOut(stdout)
 
     let expectedFile: string = $"{folder}/{testName}.{ext}"
     let expected: string =
