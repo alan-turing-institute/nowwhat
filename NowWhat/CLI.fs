@@ -4,8 +4,8 @@ open NowWhat.API
 
 let envVars = {|
   gitHub = "NOWWHAT_GITHUB_TOKEN";
-  forecastId = "FORECASTID";
-  forecastToken = "FORECASTTOKEN"
+  forecastId = "FORECAST_ID";
+  forecastToken = "NOWWHAT_FORECAST_TOKEN"
 |}
 
 let gitHubVars = [envVars.gitHub]
