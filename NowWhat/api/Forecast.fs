@@ -32,6 +32,3 @@ let getAssignments () = forecastRequest "assignments" |> Assignments.Parse
 let getClients () = forecastRequest "clients" |> Clients.Parse
 let getPlaceholders () = forecastRequest "placeholders" |> Placeholders.Parse
 let getProjects () = forecastRequest "projects" |> Projects.Parse
-
-
-
