@@ -5,7 +5,7 @@ open System.IO
 open Xunit
 open NowWhat.CLI
 
-// look for a more Xunit-idiomatic way of doing this
+// TODO: more Xunit-idiomatic way of doing this?
 let test (testName: string) (doTest: unit -> unit): unit =
     let folder: string = "../../../expected/"
     let ext: string = "txt"
@@ -53,7 +53,7 @@ let test_noEnvVars (): unit =
     )
 
 [<Fact>]
-let test_GitHub (): unit =
-    test "GitHub" (fun () ->
+let test_withEnvVars (): unit =
+    test "withEnvVars" (fun () ->
         nowwhat () |> ignore
     )
