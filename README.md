@@ -23,7 +23,7 @@ Run the tool with the following environment variables set. [How to store sensiti
 reading number that appears in URL just after server name
 - `NOWWHAT_FORECAST_TOKEN` - log into Forecast, go to My Profile and then Developers section; there will be an option to obtain a Personal Access Token
 
-### Building, running and testing
+### Building and running
 
 To build or run, in the `NowWhat` folder run:
 
@@ -32,7 +32,6 @@ dotnet build
 dotnet run
 ```
 
-To test, in the `Test` folder run:
-```
-dotnet test
-```
+### Testing
+
+See [testing guidelines](doc/testing.md).
