@@ -25,6 +25,10 @@ Currently the pre-commit hook will run the tests on any commit, but we could ref
 ## Testing methodology
 
 - store test "expectations" (expected outputs, baselines) in text files (rather than string literals in test cases)
+- as usual, a mismatch between expected and actual counts as a test failure
+- test infrastructure will create a `.new` copy of that file containing the actual output, rather than overwriting the existing baseline; this make it harder to accidentally commit changes to the baselines
+- if there is no expectation file (e.g. because this is the first time the test has been run), it will be treated like an empty expectation file; the resulting `.new` should be added to version control
+- the git aliases below make it easy to deal with these `.new` files
 
 ### Git aliases
 
@@ -51,7 +55,7 @@ Suppose we no longer want `Now what?` to be printed out. If we make that change 
 
 <img width="672" alt="Screenshot 2022-06-09 at 09 57 43" src="https://user-images.githubusercontent.com/121074/172807908-18e83223-98d3-4af3-bb88-5d3bb7aa6c83.png">
 
-It's a good idea not to overwrite existing expectation files, to make it harder to accidentally commit changes to the baselines. You can get a more readable diff with `git test-compare`:
+You can get a git-like diff with `git test-compare`:
 
 <img width="672" alt="Screenshot 2022-06-09 at 09 53 41" src="https://user-images.githubusercontent.com/121074/172807074-78aa66b3-c907-46a1-869c-c7dee38b9b53.png">
 
