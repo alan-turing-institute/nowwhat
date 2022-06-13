@@ -4,6 +4,7 @@ open System
 open System.IO
 open Xunit
 open NowWhat.CLI
+open NowWhat.API
 
 // TODO: more Xunit-idiomatic way of doing this?
 let test (testName: string) (doTest: unit -> unit): unit =
@@ -37,18 +38,18 @@ let test (testName: string) (doTest: unit -> unit): unit =
     stdout.Flush()
     Assert.Equal(expected, found)
 
-[<Fact>]
-let test_noEnvVars (): unit =
-    test "noEnvVars" (fun () ->
-        // https://github.com/alan-turing-institute/nowwhat/issues/11
-        let forecastId = Environment.GetEnvironmentVariable(envVars.forecastId)
-        let forecastToken = Environment.GetEnvironmentVariable(envVars.forecastToken)
-        for envVar in forecastVars do
-            Environment.SetEnvironmentVariable(envVar, "")
-        nowwhat () |> ignore
-        Environment.SetEnvironmentVariable(envVars.forecastId, forecastId)
-        Environment.SetEnvironmentVariable(envVars.forecastToken, forecastToken)
-    )
+// [<Fact>]
+// let test_noEnvVars (): unit =
+//     test "noEnvVars" (fun () ->
+//         // https://github.com/alan-turing-institute/nowwhat/issues/11
+//         let forecastId = Environment.GetEnvironmentVariable(Forecast.envVars.ForecastId)
+//         let forecastToken = Environment.GetEnvironmentVariable(Forecast.envVars.ForecastToken)
+//         for envVar in [Forecast.envVars.ForecastId; Forecast.envVars.ForecastToken] do
+//             Environment.SetEnvironmentVariable(envVar, "")
+//         nowwhat () |> ignore
+//         Environment.SetEnvironmentVariable(Forecast.envVars.ForecastId, forecastId)
+//         Environment.SetEnvironmentVariable(Forecast.envVars.ForecastToken, forecastToken)
+//     )
 
 [<Fact>]
 let test_withEnvVars (): unit =
