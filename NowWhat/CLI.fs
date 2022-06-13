@@ -22,6 +22,11 @@ let checkEnvironmentVariables (envVars: string List) =
     else
       allExist)
 
+let forecastCredentials (): Forecast.Session =
+  let forecastId = System.Environment.GetEnvironmentVariable("FORECAST_ID")
+  let forecastToken = System.Environment.GetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN")
+  {| accountId = forecastId; forecastToken = forecastToken; |}
+
 let nowwhat argv =
     printfn "Now what?"
 
@@ -37,8 +42,7 @@ let nowwhat argv =
     if checkEnvironmentVariables forecastVars then
       let forecastId = System.Environment.GetEnvironmentVariable(envVars.forecastId)
       let forecastToken = System.Environment.GetEnvironmentVariable(envVars.forecastToken)
-      let forecastSession = {| accountId = forecastId; forecastToken = forecastToken; |}
-      let forecastProjects = Forecast.getProjects forecastSession
+      let forecastProjects = Forecast.getProjects <| forecastCredentials()
 
       printfn "Number of projects in Forecast: %d" (forecastProjects.Projects |> Seq.length)
 
