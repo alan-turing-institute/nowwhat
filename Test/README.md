@@ -14,11 +14,13 @@ We use the [xUnit](https://github.com/xunit/xunit) test framework for .NET.
 
 The [dev setup](../script/dev-setup.sh) script will install a pre-commit hook that runs the tests on every commit. If you haven't used pre-commit hooks in this way before, we recommend giving it a try; it encourages a discipline where commits represent "good states". The idea is not to encourage you to commit less often, but rather to look for smaller commits that move you closer to your goal without breaking anything.
 
+Currently the pre-commit hook will run the tests on any commit, but we could refine that to exclude documentation-only changes (see [#23](/../../issues/23)).
+
 ## GitHub and Forecast sandboxes
 
 Tests need to be deterministic, so it is best if they don't run on live data.
 - GitHub: tests run against the [test repo](https://github.com/alan-turing-institute/Hut23-test).
-- Forecast: tests currently run against the live system (see [#21](/../../issues/21)).
+- Forecast: tests currently run against the live system (but see [#22](/../../issues/22)).
 
 ## Git aliases
 
