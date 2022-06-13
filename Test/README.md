@@ -65,7 +65,9 @@ So the idea is to treat behaviour as invariant by default and something that onl
 
 These approve, reject or compare test expectations with actual outputs.
 
-We also provide the following aliases, which should be self-explanatory:
+#### Other git aliases
+
+We also provide the following, which should be self-explanatory:
 
 - `git doc`
 - `git refactor`
