@@ -41,13 +41,11 @@ let test (testName: string) (doTest: unit -> unit): unit =
 let test_noEnvVars (): unit =
     test "noEnvVars" (fun () ->
         // https://github.com/alan-turing-institute/nowwhat/issues/11
-        let gitHubToken = Environment.GetEnvironmentVariable(envVars.gitHub)
         let forecastId = Environment.GetEnvironmentVariable(envVars.forecastId)
         let forecastToken = Environment.GetEnvironmentVariable(envVars.forecastToken)
-        for envVar in gitHubVars @ forecastVars do
+        for envVar in forecastVars do
             Environment.SetEnvironmentVariable(envVar, "")
         nowwhat () |> ignore
-        Environment.SetEnvironmentVariable(envVars.gitHub, gitHubToken)
         Environment.SetEnvironmentVariable(envVars.forecastId, forecastId)
         Environment.SetEnvironmentVariable(envVars.forecastToken, forecastToken)
     )
