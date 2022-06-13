@@ -6,6 +6,11 @@ open Hopac
 
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
+type Session = {|
+  accountId: string;
+  forecastToken: string
+|}
+
 let forecastRequest (accountId: string) (forecastToken: string) endpoint =
   Request.createUrl Get (ForecastUrl + endpoint)
   |> Request.setHeader (Authorization ("Bearer " + forecastToken))
@@ -30,5 +35,5 @@ let getClients (accountId: string) (forecastToken: string) =
   forecastRequest accountId forecastToken "clients" |> Clients.Parse
 let getPlaceholders (accountId: string) (forecastToken: string) =
   forecastRequest accountId forecastToken "placeholders" |> Placeholders.Parse
-let getProjects (accountId: string) (forecastToken: string) =
-  forecastRequest accountId forecastToken "projects" |> Projects.Parse
+let getProjects (session: Session) =
+  forecastRequest session.accountId session.forecastToken "projects" |> Projects.Parse
