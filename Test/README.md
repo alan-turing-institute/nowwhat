@@ -12,7 +12,7 @@ We use the [xUnit](https://github.com/xunit/xunit) test framework for .NET.
 
 ### Pre-commit hook
 
-The [dev setup script](../script/dev-setup.sh) will install a pre-commit hook that runs the tests on every commit. If you haven't used pre-commit hooks in this way before, we recommend giving it a try; it encourages a discipline where commits represent "good states".
+The [dev setup](../script/dev-setup.sh) script will install a pre-commit hook that runs the tests on every commit. If you haven't used pre-commit hooks in this way before, we recommend giving it a try; it encourages a discipline where commits represent "good states". The idea is not to encourage you to commit less often, but rather to look for smaller commits that move you closer to your goal without breaking anything.
 
 ## GitHub and Forecast sandboxes
 
@@ -22,6 +22,8 @@ Tests need to be deterministic, so it is best if they don't run on live data.
 
 ## Git aliases
 
+These are self-explanatory:
+
 - `git doc`
 - `git refactor`
-- `git rename` (a variant of `git refactor`)
+- `git rename` (variant of `git refactor`)
