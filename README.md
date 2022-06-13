@@ -9,7 +9,7 @@ Reimagination of [whatnow](https://github.com/alan-turing-institute/whatnow), al
   - For Mac OSX you can run `brew install dotnet` (Runtime) and `brew install dotnet-sdk` (SDK)
   - To test your install is working runt `dotnet fsi` from the terminal (to quit run `#quit;;`)
 
-Run `dotnet paket restore`.
+Run `dotnet tool restore` and then `dotnet paket restore`.
 
 ## Setup
 
