@@ -10,6 +10,10 @@ dotnet test
 ```
 We use the [xUnit](https://github.com/xunit/xunit) test framework for .NET.
 
+### Pre-commit hook
+
+The [dev setup script](../script/dev-setup.sh) will install a pre-commit hook that runs the tests on every commit. If you haven't used pre-commit hooks in this way before, we recommend giving it a try; it encourages a discipline where commits represent "good states".
+
 ## GitHub and Forecast sandboxes
 
 Tests need to be deterministic, so it is best if they don't run on live data.
