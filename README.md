@@ -5,7 +5,7 @@ Reimagination of [whatnow](https://github.com/alan-turing-institute/whatnow), al
 
 ## Prerequisites
 
-- [Latest .NET Core Runtime and SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [.NET Core 6.0 Runtime and SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
   - For Mac OSX you can run `brew install dotnet` (Runtime) and `brew install dotnet-sdk` (SDK)
   - To test your install is working runt `dotnet fsi` from the terminal (to quit run `#quit;;`)
 
