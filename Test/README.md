@@ -28,13 +28,13 @@ Currently the pre-commit hook will run the tests on any commit, but we could ref
 
 ### Git aliases
 
-The following git aliases explicitly support the "approval testing" approach:
+The following git aliases (also installed by the [dev setup](../script/dev-setup.sh) script) explicitly support the "approval testing" approach:
 
+- `git test-compare`
 - `git test-approve`
 - `git test-reject`
-- `git test-compare`
 
-The idea is to make it easy to compare/accept/reject changes to test baselines. For example, the (current) expected console output for running `nowwhat` with no environment variables set is something like:
+The idea is to make it easy to compare, approve or reject changes to test baselines (given that mismatching outputs are recorded in `.new` files). For example, the expected console output for running `nowwhat` when no environment variables are set is something like:
 
 >```
 >Now what?
@@ -43,7 +43,7 @@ The idea is to make it easy to compare/accept/reject changes to test baselines. 
 >Please set environment variable FORECASTID.
 >Please set environment variable FORECASTTOKEN.
 
-Suppose we no longer want `Now what?` to be printed out, so we make that change to the code. When we run the tests, we'll get a test failure:
+Suppose we no longer want `Now what?` to be printed out. If we make that change to the code and then run the tests, we'll get a test failure:
 
 <img width="672" alt="Screenshot 2022-06-09 at 09 55 59" src="https://user-images.githubusercontent.com/121074/172807697-73253c99-131d-479e-9299-f5386641c89f.png">
 
@@ -51,7 +51,7 @@ Suppose we no longer want `Now what?` to be printed out, so we make that change 
 
 <img width="672" alt="Screenshot 2022-06-09 at 09 57 43" src="https://user-images.githubusercontent.com/121074/172807908-18e83223-98d3-4af3-bb88-5d3bb7aa6c83.png">
 
-It's a good idea not to overwrite existing expectation files, to make it harder to accidentially commit changes to the baselines. You can get a more readable diff with `git test-compare`:
+It's a good idea not to overwrite existing expectation files, to make it harder to accidentally commit changes to the baselines. You can get a more readable diff with `git test-compare`:
 
 <img width="672" alt="Screenshot 2022-06-09 at 09 53 41" src="https://user-images.githubusercontent.com/121074/172807074-78aa66b3-c907-46a1-869c-c7dee38b9b53.png">
 
