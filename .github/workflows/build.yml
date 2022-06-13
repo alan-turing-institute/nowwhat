@@ -21,7 +21,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - run: dotnet tool restore
-    - name: Check `dotnet run`
+    - name: Check `dotnet run` # verify this builds/doesn't crash
       run: |
         cd NowWhat
         dotnet run
