@@ -34,4 +34,4 @@ dotnet run
 
 ### Testing
 
-See [testing guidelines](doc/testing.md).
+See [testing guidelines](Test/README.md).
