@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="api/Github.fs" />
     <Compile Include="api/Forecast.fs" />
+    <Compile Include="domainmodel/Forecast.fs" />
     <Compile Include="CLI.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
