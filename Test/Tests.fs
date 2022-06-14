@@ -2,9 +2,11 @@ module Tests
 
 open System
 open System.IO
+open Thoth.Json.Net
 open Xunit
 open NowWhat.CLI
 open NowWhat.API
+open NowWhat.DomainModel.Forecast
 
 // TODO: more Xunit-idiomatic way of doing this?
 let test (testName: string) (doTest: unit -> unit): unit =
@@ -56,3 +58,13 @@ let test_withEnvVars (): unit =
     test "withEnvVars" (fun () ->
         nowwhat () |> ignore
     )
+
+[<Fact>]
+let test_project_deserialise (): unit =
+    let projectJson = """{
+    "id": 1684536
+}
+"""
+    match projectJson |> Decode.fromString projectDecoder with
+    | Ok project -> printfn $"Project: {project}"
+    | Error err -> printfn $"Error: {err}"
