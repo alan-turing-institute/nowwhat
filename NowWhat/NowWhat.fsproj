@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Config.fs" />
     <Compile Include="api/Github.fs" />
     <Compile Include="api/Forecast.fs" />
     <Compile Include="CLI.fs" />
