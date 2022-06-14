@@ -24,7 +24,7 @@ jobs:
     - name: Check `dotnet run` # verify this builds/doesn't crash
       run: |
         cd NowWhat
-        dotnet run
+        NOWWHAT_GITHUB_TOKEN=${{secrets.NOWWHAT_GITHUB_TOKEN}} FORECAST_ID=974183 NOWWHAT_FORECAST_TOKEN=${{secrets.NOWWHAT_FORECAST_TOKEN}} dotnet run
     - name: Test suite
       run: |
         cd Test
