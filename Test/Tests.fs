@@ -62,9 +62,12 @@ let test_withEnvVars (): unit =
 [<Fact>]
 let test_project_deserialise (): unit =
     let projectJson = """{
-    "id": 1684536
+    "id": 1684536,
+    "name": "Time Off",
+    "code": null
 }
 """
     match projectJson |> Decode.fromString projectDecoder with
     | Ok project -> printfn $"Project: {project}"
     | Error err -> printfn $"Error: {err}"
+
