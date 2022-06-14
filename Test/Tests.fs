@@ -59,15 +59,31 @@ let test_withEnvVars (): unit =
         nowwhat () |> ignore
     )
 
-[<Fact>]
-let test_project_deserialise (): unit =
-    let projectJson = """{
-    "id": 1684536,
-    "name": "Time Off",
-    "code": null
+let rootJson = """{
+  "projects": [
+    {
+      "id": 1684536,
+      "name": "Time Off",
+      "color": "black",
+      "code": null,
+      "notes": null,
+      "start_date": "2020-01-07",
+      "end_date": "2020-01-07",
+      "harvest_id": null,
+      "archived": false,
+      "updated_at": "2021-01-11T14:13:48.634Z",
+      "updated_by_id": 867021,
+      "client_id": null,
+      "tags": []
+    }
+  ]
 }
 """
-    match projectJson |> Decode.fromString projectDecoder with
-    | Ok project -> printfn $"Project: {project}"
-    | Error err -> printfn $"Error: {err}"
 
+[<Fact>]
+let test_Forecast_deserialise (): unit =
+    match rootJson |> Decode.fromString rootDecoder with
+    | Ok projects -> printfn $"Root: {projects}"
+    | Error err ->
+        printfn $"Error: {err}"
+        Assert.True(false)
