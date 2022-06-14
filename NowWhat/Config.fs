@@ -14,6 +14,8 @@ open System.IO
 
 let [<Literal>] secretsFile = __SOURCE_DIRECTORY__ + "/secrets.json"
 
+exception SecretLoadException of string
+
 type Secrets =
     { githubToken   : string
       forecastId    : string
@@ -35,7 +37,7 @@ let getSecretsFromConfig () : Secrets =
         | Ok config -> { githubToken   = config.NOWWHAT_GITHUB_TOKEN
                          forecastId    = config.FORECAST_ID
                          forecastToken = config.NOWWHAT_FORECAST_TOKEN }
-        | Error err -> failwith err
+        | Error err -> raise (SecretLoadException err)
 
 /// Look up secrets for connection details. First look in the enivronment
 /// variables; then, if any cannot be found, from a config file in
@@ -48,6 +50,9 @@ let lazySecrets =
               githubToken = System.Environment.GetEnvironmentVariable("NOWWHAT_GITHUB_TOKEN")
           }
 
+        // printfn $"secrets.forecastId: '{secrets.forecastId}'"
+        // printfn $"secrets.forecastToken: '{secrets.forecastToken}'"
+        // printfn $"secrets.githubToken: '{secrets.githubToken}'"
         if (secrets.forecastId = null || secrets.forecastToken = null || secrets.githubToken = null) then
            getSecretsFromConfig ()
         else
@@ -56,5 +61,8 @@ let lazySecrets =
 
 /// getSecrets only opens the config file once even if called multiple times
 let getSecrets () =
-    lazySecrets.Force()
-
+    try
+      let secrets = lazySecrets.Force()
+      Ok secrets
+    with
+    | e -> Error e

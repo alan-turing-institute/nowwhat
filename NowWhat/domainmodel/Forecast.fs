@@ -2,6 +2,8 @@ module NowWhat.DomainModel.Forecast
 
 open Thoth.Json.Net
 
+exception JsonDecodeException of string
+
 type Project = {
   id: int;
   name: string;
@@ -26,8 +28,8 @@ let projectDecoder : Decoder<Project> =
     )
 
 let rootDecoder : Decoder<Root> =
-  Decode.object (
-    fun get -> {
-      Root.projects = get.Required.Field "projects" (Decode.list projectDecoder)
-    }
-  )
+    Decode.object (
+      fun get -> {
+        Root.projects = get.Required.Field "projects" (Decode.list projectDecoder)
+      }
+    )

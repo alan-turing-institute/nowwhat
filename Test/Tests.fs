@@ -2,19 +2,35 @@ module Tests
 
 open System
 open System.IO
-open Thoth.Json.Net
 open Xunit
 open NowWhat.CLI
 open NowWhat.API
-open NowWhat.DomainModel.Forecast
+open NowWhat.DomainModel
+open Thoth.Json.Net
 
-let redirectStdOut () =
-    let stringWriter = new StringWriter()
-    Console.SetOut(stringWriter)
-    stringWriter
 
-let readExpected (filename: string) =
-    File.ReadAllText($"{__SOURCE_DIRECTORY__}/expected/{filename}")
+
+type RedirectStdOut(fileNameStub: string) =
+    // Store native stdout for later use
+    let consoleStdOut = Console.Out
+    let capturedStdOut = new StreamWriter($"{__SOURCE_DIRECTORY__}/expected/{fileNameStub}.new.txt")
+
+    // Setup: redirect output to a StringWriter
+    do Console.SetOut(capturedStdOut)
+
+    // Teardown: Reset to the cached native stdout
+    interface IDisposable with
+        member __.Dispose () =
+            capturedStdOut.Flush()
+            Console.SetOut(consoleStdOut)
+
+let StdOutMatches (fileNameStub: string) =
+    let expectedPath = $"{__SOURCE_DIRECTORY__}/expected/{fileNameStub}.txt"
+    let actualPath = $"{__SOURCE_DIRECTORY__}/expected/{fileNameStub}.new.txt"
+    Assert.Equal(File.ReadAllText(expectedPath), File.ReadAllText(actualPath))
+    // We will only delete the file and return 'true' if the previous Assert succeeded
+    File.Delete(actualPath)
+    true
 
 let rootJson = """{
   "projects": [
@@ -37,34 +53,36 @@ let rootJson = """{
 }
 """
 
-[<Fact>]
-let ``End-to-end test without environment variables`` () =
-    let stdout = redirectStdOut ()
+// [<Theory>]
+// [<InlineData("withEnvVars")>]
+// let ``End-to-end test with environment variables`` (fileNameStub: string) =
+//     using (new RedirectStdOut(fileNameStub)) ( fun _ ->
+//         nowwhat ()
+//     ) |> ignore
+//     Assert.True(StdOutMatches(fileNameStub))
+
+[<Theory>]
+[<InlineData("noEnvVars")>]
+let ``End-to-end test without environment variables`` (fileNameStub: string) =
     let testfn () =
-        let forecastId = Environment.GetEnvironmentVariable("FORECAST_ID")
-        let forecastToken = Environment.GetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN")
-        for envVar in
-            [ "FORECAST_ID"
-              "NOWWHAT_FORECAST_TOKEN" ] do
-            Environment.SetEnvironmentVariable(envVar, "")
-        nowwhat () |> ignore
-        Environment.SetEnvironmentVariable("FORECAST_ID", forecastId)
-        Environment.SetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN", forecastToken)
-
-    testfn()
-    // Assert.Throws<Forecast.HttpException>(testfn) |> ignore
-    Assert.Equal(readExpected("noEnvVars.txt"), stdout.ToString())
-
-[<Fact>]
-let ``End-to-end test with environment variables`` () =
-    let stdout = redirectStdOut ()
-    nowwhat () |> ignore
-    Assert.Equal(readExpected("withEnvVars.txt"), stdout.ToString())
+        using (new RedirectStdOut(fileNameStub)) ( fun _ ->
+            let forecastId = Environment.GetEnvironmentVariable("FORECAST_ID")
+            let forecastToken = Environment.GetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN")
+            try
+                for envVar in [ "FORECAST_ID"; "NOWWHAT_FORECAST_TOKEN" ] do
+                    Environment.SetEnvironmentVariable(envVar, "")
+                    nowwhat () |> ignore
+            finally
+                Environment.SetEnvironmentVariable("FORECAST_ID", forecastId)
+                Environment.SetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN", forecastToken)
+        )
+    Assert.Throws<Forecast.UnauthorisedException>(testfn) |> ignore
+    Assert.True(StdOutMatches(fileNameStub))
 
 [<Fact>]
 let ``test Forecast JSON deserialisation`` () =
-    match rootJson |> Decode.fromString rootDecoder with
-    | Ok projects -> printfn $"Root: {projects}"
-    | Error err ->
-        printfn $"Error: {err}"
-        Assert.True(false)
+    let expected =  { Forecast.Root.projects = [{ id = 1684536; name = "Time Off"; color = "black"; code = None; notes = None }] }
+    let actual = match rootJson |> Decode.fromString Forecast.rootDecoder with
+                 | Ok projects -> projects
+                 | Error _ -> { Forecast.Root.projects = [] }
+    Assert.Equal(expected, actual)
