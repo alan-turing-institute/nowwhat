@@ -59,16 +59,6 @@ let test_withEnvVars (): unit =
         nowwhat () |> ignore
     )
 
-let projectJson = """{
-    "id": 1684536,
-    "name": "Time Off",
-    "color": "black",
-    "code": null,
-    "notes": null,
-    "unrecognisedField": null
-}
-"""
-
 let rootJson = """{
   "projects": [
     {
@@ -93,7 +83,7 @@ let rootJson = """{
 [<Fact>]
 let test_Forecast_project_deserialise (): unit =
     match rootJson |> Decode.fromString rootDecoder with
-    | Ok project -> printfn $"Project: {project}"
+    | Ok projects -> printfn $"Root: {projects}"
     | Error err ->
         printfn $"Error: {err}"
         Assert.True(false)
