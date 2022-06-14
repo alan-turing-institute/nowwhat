@@ -81,7 +81,7 @@ let rootJson = """{
 """
 
 [<Fact>]
-let test_Forecast_project_deserialise (): unit =
+let test_Forecast_deserialise (): unit =
     match rootJson |> Decode.fromString rootDecoder with
     | Ok projects -> printfn $"Root: {projects}"
     | Error err ->
