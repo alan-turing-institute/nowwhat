@@ -9,7 +9,7 @@ module NowWhat.Config
        variables NOWWHAT_GITHUB_TOKEN; FORECAST_ID; and NOWWHAT_FORECAST_TOKEN
 *)
 
-open Thoth.Json.Net 
+open Thoth.Json.Net
 open System.IO
 
 let [<Literal>] secretsFile = __SOURCE_DIRECTORY__ + "/secrets.json"
@@ -26,7 +26,7 @@ type Config =
       NOWWHAT_FORECAST_TOKEN : string
   }
 
-let getSecretsFromConfig () : Secrets = 
+let getSecretsFromConfig () : Secrets =
     let homeDir = System.Environment.GetFolderPath System.Environment.SpecialFolder.UserProfile
     let pathToConfig = homeDir + "/" + ".config/nowwhat/secrets.json"
     let maybeSecrets = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
@@ -35,7 +35,7 @@ let getSecretsFromConfig () : Secrets =
         | Ok config -> { githubToken   = config.NOWWHAT_GITHUB_TOKEN
                          forecastId    = config.FORECAST_ID
                          forecastToken = config.NOWWHAT_FORECAST_TOKEN }
-        | Error err -> failwith err 
+        | Error err -> failwith err
 
 /// Look up secrets for connection details. First look in the enivronment
 /// variables; then, if any cannot be found, from a config file in
@@ -54,7 +54,7 @@ let lazySecrets =
            secrets
     )
 
-/// getSecrets only opens the config file once even if called multiple times           
+/// getSecrets only opens the config file once even if called multiple times
 let getSecrets () =
     lazySecrets.Force()
 
