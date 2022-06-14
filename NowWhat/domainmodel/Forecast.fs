@@ -6,7 +6,8 @@ type Project = {
   id: int;
   name: string;
   color: string;
-  code: string option
+  code: string option;
+  notes: string option;
 }
 
 let projectDecoder : Decoder<Project> =
@@ -16,5 +17,6 @@ let projectDecoder : Decoder<Project> =
             Project.name = get.Required.Field "name" Decode.string;
             Project.color = get.Required.Field "color" Decode.string;
             Project.code = get.Optional.Field "code" Decode.string;
+            Project.notes = get.Optional.Field "notes" Decode.string;
         }
     )

@@ -65,7 +65,8 @@ let test_project_deserialise (): unit =
     "id": 1684536,
     "name": "Time Off",
     "color": "black",
-    "code": null
+    "code": null,
+    "notes": null
 }
 """
     match projectJson |> Decode.fromString projectDecoder with
