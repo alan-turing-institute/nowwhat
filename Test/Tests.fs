@@ -64,10 +64,12 @@ let test_project_deserialise (): unit =
     let projectJson = """{
     "id": 1684536,
     "name": "Time Off",
+    "color": "black",
     "code": null
 }
 """
     match projectJson |> Decode.fromString projectDecoder with
     | Ok project -> printfn $"Project: {project}"
-    | Error err -> printfn $"Error: {err}"
-
+    | Error err ->
+        Assert.True(false)
+        printfn $"Error: {err}"
