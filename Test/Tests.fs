@@ -2,90 +2,50 @@ module Tests
 
 open System
 open System.IO
-open Thoth.Json.Net
 open Xunit
 open NowWhat.CLI
 open NowWhat.API
-open NowWhat.DomainModel.Forecast
+open NowWhat.DomainModel
+open Thoth.Json.Net
 
-// TODO: more Xunit-idiomatic way of doing this?
-let test (testName: string) (doTest: unit -> unit): unit =
-    let folder: string = "../../../expected/"
-    let ext: string = "txt"
-    let foundFile: string = $"{folder}/{testName}.new.{ext}"
 
-    let writer = new StreamWriter(foundFile)
-    Console.SetOut(writer)
-    let restoreDir = Directory.GetCurrentDirectory()
-    Directory.SetCurrentDirectory("../../../../NowWhat")
 
-    try
-        doTest()
-    finally
-        Directory.SetCurrentDirectory(restoreDir)
-        writer.Flush()
-        let stdout = new StreamWriter(Console.OpenStandardOutput())
-        Console.SetOut(stdout)
+type RedirectStdOut(fileNameStub: string) =
+    // Store native stdout for later use
+    let consoleStdOut = Console.Out
+    let capturedStdOut = new StreamWriter($"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.new.txt")
 
-    let expectedFile: string = $"{folder}/{testName}.{ext}"
-    let expected: string =
-        if File.Exists(expectedFile) then File.ReadAllText(expectedFile) else ""
-    let found: string = File.ReadAllText(foundFile)
-    let equal: bool = expected = found
-    if equal then
-        printfn $"{testName}: passed."
-        File.Delete(foundFile)
-    else
-        printfn $"{testName}: failed.\nFound:\n{found}\nExpected:\n{expected}"
-    stdout.Flush()
-    Assert.Equal(expected, found)
+    // Setup: redirect output to a StringWriter
+    do Console.SetOut(capturedStdOut)
 
-// Commented out by JG because I've made Config.getSecrets more robust, which
-// means it's harder to make it fail.
-// [<Fact>]
-// let test_noEnvVars (): unit =
-//     test "noEnvVars" (fun () ->
-//         // https://github.com/alan-turing-institute/nowwhat/issues/11
-//         let forecastId = Environment.GetEnvironmentVariable(Forecast.envVars.ForecastId)
-//         let forecastToken = Environment.GetEnvironmentVariable(Forecast.envVars.ForecastToken)
-//         for envVar in [Forecast.envVars.ForecastId; Forecast.envVars.ForecastToken] do
-//             Environment.SetEnvironmentVariable(envVar, "")
-//         nowwhat () |> ignore
-//         Environment.SetEnvironmentVariable(Forecast.envVars.ForecastId, forecastId)
-//         Environment.SetEnvironmentVariable(Forecast.envVars.ForecastToken, forecastToken)
-//     )
+    // Teardown: Reset to the cached native stdout
+    interface IDisposable with
+        member __.Dispose () =
+            capturedStdOut.Flush()
+            Console.SetOut(consoleStdOut)
 
-[<Fact>]
-let test_withEnvVars (): unit =
-    test "withEnvVars" (fun () ->
-        nowwhat () |> ignore
-    )
+let StdOutMatches (fileNameStub: string) =
+    let expectedPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.txt"
+    let actualPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.new.txt"
+    Assert.Equal(File.ReadAllText(expectedPath), File.ReadAllText(actualPath))
+    // We will only delete the file and return 'true' if the previous Assert succeeded
+    File.Delete(actualPath)
+    true
 
-let rootJson = """{
-  "projects": [
-    {
-      "id": 1684536,
-      "name": "Time Off",
-      "color": "black",
-      "code": null,
-      "notes": null,
-      "start_date": "2020-01-07",
-      "end_date": "2020-01-07",
-      "harvest_id": null,
-      "archived": false,
-      "updated_at": "2021-01-11T14:13:48.634Z",
-      "updated_by_id": 867021,
-      "client_id": null,
-      "tags": []
-    }
-  ]
-}
-"""
+[<Theory>]
+[<InlineData("withEnvVars")>]
+let ``End-to-end test with environment variables`` (fileNameStub: string) =
+    using (new RedirectStdOut(fileNameStub)) ( fun _ ->
+        nowwhat ()
+    ) |> ignore
+    Assert.True(StdOutMatches(fileNameStub))
 
-[<Fact>]
-let test_Forecast_deserialise (): unit =
-    match rootJson |> Decode.fromString rootDecoder with
-    | Ok projects -> printfn $"Root: {projects}"
-    | Error err ->
-        printfn $"Error: {err}"
-        Assert.True(false)
+[<Theory>]
+[<InlineData("rootSerialised.json")>]
+let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
+    let expected =  { Forecast.Root.projects = [{ id = 1684536; name = "Time Off"; color = "black"; code = None; notes = None }] }
+    let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
+    let actual = match rootJson |> Decode.fromString Forecast.rootDecoder with
+                 | Ok projects -> projects
+                 | Error _ -> { Forecast.Root.projects = [] }
+    Assert.Equal(expected, actual)
