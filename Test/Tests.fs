@@ -66,8 +66,9 @@ let test_project_deserialise (): unit =
     "name": "Time Off",
     "color": "black",
     "code": null,
-    "notes": null
-}
+    "notes": null,
+    "unrecognisedField": null
+} 
 """
     match projectJson |> Decode.fromString projectDecoder with
     | Ok project -> printfn $"Project: {project}"
