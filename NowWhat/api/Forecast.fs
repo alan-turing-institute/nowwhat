@@ -6,6 +6,7 @@ open Hopac
 
 // exception UnauthorisedException of System.Exception
 exception HttpException of string
+exception UnauthorisedException of string
 
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
@@ -30,7 +31,9 @@ let forecastRequest (endpoint: string) =
               |> run
   let responseBody = response |> Response.readBodyAsString |> run
   if (response.statusCode < 200) || (response.statusCode > 299) then
-    raise (HttpException $"Forecast request failed. Status code: {response.statusCode}; Message: {responseBody}")
+    match response.statusCode with
+      | 401 -> raise (UnauthorisedException $"Forecast API authorisation failed. Status code: {response.statusCode}; Message: {responseBody}")
+      | _ -> raise (HttpException $"Forecast request failed. Status code: {response.statusCode}; Message: {responseBody}")
   responseBody
 
 // Forecast endpoint functions
