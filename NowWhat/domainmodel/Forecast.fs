@@ -10,6 +10,10 @@ type Project = {
   notes: string option;
 }
 
+type Root = {
+  projects: Project List
+}
+
 let projectDecoder : Decoder<Project> =
     Decode.object (
         fun get -> {
@@ -20,3 +24,10 @@ let projectDecoder : Decoder<Project> =
             Project.notes = get.Optional.Field "notes" Decode.string;
         }
     )
+
+let rootDecoder : Decoder<Root> =
+  Decode.object (
+    fun get -> {
+      Root.projects = get.Required.Field "projects" (Decode.list projectDecoder)
+    }
+  )
