@@ -2,8 +2,11 @@ module Tests
 
 open System
 open System.IO
+open Thoth.Json.Net
 open Xunit
 open NowWhat.CLI
+open NowWhat.API
+open NowWhat.DomainModel.Forecast
 
 // TODO: more Xunit-idiomatic way of doing this?
 let test (testName: string) (doTest: unit -> unit): unit =
@@ -37,23 +40,36 @@ let test (testName: string) (doTest: unit -> unit): unit =
     stdout.Flush()
     Assert.Equal(expected, found)
 
-[<Fact>]
-let test_noEnvVars (): unit =
-    test "noEnvVars" (fun () ->
-        // https://github.com/alan-turing-institute/nowwhat/issues/11
-        let gitHubToken = Environment.GetEnvironmentVariable(envVars.gitHub)
-        let forecastId = Environment.GetEnvironmentVariable(envVars.forecastId)
-        let forecastToken = Environment.GetEnvironmentVariable(envVars.forecastToken)
-        for envVar in gitHubVars @ forecastVars do
-            Environment.SetEnvironmentVariable(envVar, "")
-        nowwhat () |> ignore
-        Environment.SetEnvironmentVariable(envVars.gitHub, gitHubToken)
-        Environment.SetEnvironmentVariable(envVars.forecastId, forecastId)
-        Environment.SetEnvironmentVariable(envVars.forecastToken, forecastToken)
-    )
+// Commented out by JG because I've made Config.getSecrets more robust, which
+// means it's harder to make it fail.
+// [<Fact>]
+// let test_noEnvVars (): unit =
+//     test "noEnvVars" (fun () ->
+//         // https://github.com/alan-turing-institute/nowwhat/issues/11
+//         let forecastId = Environment.GetEnvironmentVariable(Forecast.envVars.ForecastId)
+//         let forecastToken = Environment.GetEnvironmentVariable(Forecast.envVars.ForecastToken)
+//         for envVar in [Forecast.envVars.ForecastId; Forecast.envVars.ForecastToken] do
+//             Environment.SetEnvironmentVariable(envVar, "")
+//         nowwhat () |> ignore
+//         Environment.SetEnvironmentVariable(Forecast.envVars.ForecastId, forecastId)
+//         Environment.SetEnvironmentVariable(Forecast.envVars.ForecastToken, forecastToken)
+//     )
 
 [<Fact>]
 let test_withEnvVars (): unit =
     test "withEnvVars" (fun () ->
         nowwhat () |> ignore
     )
+
+[<Fact>]
+let test_project_deserialise (): unit =
+    let projectJson = """{
+    "id": 1684536,
+    "name": "Time Off",
+    "code": null
+}
+"""
+    match projectJson |> Decode.fromString projectDecoder with
+    | Ok project -> printfn $"Project: {project}"
+    | Error err -> printfn $"Error: {err}"
+

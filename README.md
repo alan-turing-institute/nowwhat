@@ -5,7 +5,7 @@ Reimagination of [whatnow](https://github.com/alan-turing-institute/whatnow), al
 
 ## Prerequisites
 
-- [Latest .NET Core Runtime and SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [.NET Core 6.0 Runtime and SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
   - For Mac OSX you can run `brew install dotnet` (Runtime) and `brew install dotnet-sdk` (SDK)
   - To test your install is working runt `dotnet fsi` from the terminal (to quit run `#quit;;`)
 
@@ -22,9 +22,9 @@ Run [`script/dev-setup.sh`](script/dev-setup.sh) from project root.
 Run the tool with the following environment variables set. [How to store sensitive environment variables on MacOS](https://medium.com/@johnjjung/how-to-store-sensitive-environment-variables-on-macos-76bd5ba464f6) may be useful.
 
 - `NOWWHAT_GITHUB_TOKEN` - Github [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
-- `FORECAST_ID` - most easily found by logging in via web interface and
-reading number that appears in URL just after server name
-- `NOWWHAT_FORECAST_TOKEN` - log into Forecast, go to My Profile and then Developers section; there will be an option to obtain a Personal Access Token
+    - The scope you need is `repo` (`Full control of private repositories`)
+- `FORECAST_ID` - most easily found by logging into [Forecast](https://forecastapp.com/) via web interface and reading number that appears in URL just after server name
+- `NOWWHAT_FORECAST_TOKEN` - log into [Forecast](https://forecastapp.com/), go to My Profile and then Developers section; there will be an option to obtain a Personal Access Token
 
 ### Building and running
 

@@ -1,4 +1,2 @@
 Now what?
-Please set environment variable NOWWHAT_GITHUB_TOKEN.
-Please set environment variable FORECAST_ID.
-Please set environment variable NOWWHAT_FORECAST_TOKEN.
+ERROR: Forecast API authorisation failed. Status code: 401; Message: {"reason":"missing-token","account_id":""}

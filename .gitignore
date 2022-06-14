@@ -3,6 +3,7 @@ playground.fsx
 .DS_Store
 .fake
 .ionide
+.vscode
 
 Dd]ebug/
 [Rr]elease/
