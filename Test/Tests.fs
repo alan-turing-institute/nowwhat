@@ -69,14 +69,6 @@ let projectJson = """{
 }
 """
 
-[<Fact>]
-let test_Forecast_project_deserialise (): unit =
-    match projectJson |> Decode.fromString projectDecoder with
-    | Ok project -> printfn $"Project: {project}"
-    | Error err ->
-        Assert.True(false)
-        printfn $"Error: {err}"
-
 let rootJson = """{
   "projects": [
     {
@@ -99,9 +91,9 @@ let rootJson = """{
 """
 
 [<Fact>]
-let test_Forecast_root_deserialise (): unit =
+let test_Forecast_project_deserialise (): unit =
     match rootJson |> Decode.fromString rootDecoder with
-    | Ok projects -> printfn $"Projects: {projects}"
+    | Ok project -> printfn $"Project: {project}"
     | Error err ->
-        Assert.True(false)
         printfn $"Error: {err}"
+        Assert.True(false)
