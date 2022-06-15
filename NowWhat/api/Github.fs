@@ -122,7 +122,7 @@ let runGithubQuery (gitHubToken: string) body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
-let getAllProjectIssues (projectName: string) =
+let getAllProjectIssues (projectName: string): Issue array =
   // the parent function is only wrapping up the recursive call that deals with paging of the responses
   let githubToken = match getSecrets () with
                     | Ok secrets -> secrets.githubToken
@@ -203,6 +203,4 @@ let getIssueDetails (gitHubToken: string) issueNumber =
 *)
 
 let getIssues (): Issue list =
-  getAllProjectIssues "Project Tracker" |> ignore
-  let sampleIssue: Issue = { id = "ABCD=+1234"; number = 1; title = "Example Issue"; body = "Some body text here"; state = "OPEN"}
-  [sampleIssue]
+  getAllProjectIssues "Project Tracker" |> Array.toList
