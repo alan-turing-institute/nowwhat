@@ -33,18 +33,7 @@ let forecastRequest (endpoint: string) =
       | _ -> raise (FailedException $"Forecast request failed. Status code: {response.statusCode}; Message: {responseBody}")
   responseBody
 
-// Forecast endpoint functions
-let getPeople () =
-  forecastRequest  "people" |> People.Parse
-
-let getAssignments () =
-  forecastRequest "assignments" |> Assignments.Parse
-
-let getClients () =
-  forecastRequest "clients" |> Clients.Parse
-
-let getPlaceholders () =
-  forecastRequest "placeholders" |> Placeholders.Parse
+// Other useful endpoints are: people; assignments; clients; placeholders.
 
 let getProjects (): ForecastModel.Project List =
   match forecastRequest "projects" |> Decode.fromString ForecastModel.rootDecoder with
