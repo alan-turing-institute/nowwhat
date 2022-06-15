@@ -5,14 +5,12 @@ module NowWhat.Config
        - The user's Forecast ID and Personal Access Token
        - The user's GitHub Personal Access Token
 
-       Looks first in $HOME/.config/nowwhat/secrets.xml, then in the environment
+       Looks first in $HOME/.config/nowwhat/secrets.json, then in the environment
        variables NOWWHAT_GITHUB_TOKEN; FORECAST_ID; and NOWWHAT_FORECAST_TOKEN
 *)
 
 open Thoth.Json.Net
 open System.IO
-
-let [<Literal>] secretsFile = __SOURCE_DIRECTORY__ + "/secrets.json"
 
 exception SecretLoadException of string
 
@@ -34,7 +32,7 @@ let getSecretsFromConfig () : Secrets =
     if not (File.Exists pathToConfig) then
       raise (SecretLoadException "Secrets file not found")
     else
-    
+
     let maybeSecrets = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
 
     match maybeSecrets with
@@ -65,7 +63,7 @@ let lazySecrets =
 
 /// Return server credentials from either environment variables (if defined) or
 /// a config file. The file will only be read once.
-let getSecrets () =
+let getSecrets (): Result<Secrets, exn> =
     try
       let secrets = lazySecrets.Force()
       Ok secrets

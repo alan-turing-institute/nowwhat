@@ -8,12 +8,12 @@ open NowWhat.API
 open NowWhat.DomainModel
 open Thoth.Json.Net
 
-
+let fixtureDir: string = $"{__SOURCE_DIRECTORY__}/fixtures"
 
 type RedirectStdOut(fileNameStub: string) =
     // Store native stdout for later use
     let consoleStdOut = Console.Out
-    let capturedStdOut = new StreamWriter($"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.new.txt")
+    let capturedStdOut = new StreamWriter($"{fixtureDir}/{fileNameStub}.new.txt")
 
     // Setup: redirect output to a StringWriter
     do Console.SetOut(capturedStdOut)
@@ -24,13 +24,12 @@ type RedirectStdOut(fileNameStub: string) =
             capturedStdOut.Flush()
             Console.SetOut(consoleStdOut)
 
-let StdOutMatches (fileNameStub: string) =
-    let expectedPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.txt"
-    let actualPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.new.txt"
+let expectStdOut (fileNameStub: string): unit =
+    let expectedPath = $"{fixtureDir}/{fileNameStub}.txt"
+    let actualPath = $"{fixtureDir}/{fileNameStub}.new.txt"
     Assert.Equal(File.ReadAllText(expectedPath), File.ReadAllText(actualPath))
     // We will only delete the file and return 'true' if the previous Assert succeeded
     File.Delete(actualPath)
-    true
 
 [<Theory>]
 [<InlineData("withEnvVars")>]
@@ -38,17 +37,16 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) =
     using (new RedirectStdOut(fileNameStub)) ( fun _ ->
         nowwhat ()
     ) |> ignore
-    Assert.True(StdOutMatches(fileNameStub))
+    expectStdOut fileNameStub
 
 [<Theory>]
 [<InlineData("rootSerialised.json")>]
 let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
-    let expected =  { ForecastModel.Root.projects = [{ id = 1684536; name = "Time Off"; color = "black"; code = None; notes = None }] }
-    // printfn $"Expected Issue: \n{expected}"
-    let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
-    let actual = match rootJson |> Decode.fromString ForecastModel.rootDecoder with
+    let expected =  { Forecast.Root.projects = [{ id = 1684536; harvestId = None; clientId = None; name = "Time Off"; code = None; tags = []; notes = None }] }
+    let rootJson = File.ReadAllText($"{fixtureDir}/{jsonFileName}")
+    let actual = match rootJson |> Decode.fromString Forecast.rootDecoder with
                  | Ok projects -> projects
-                 | Error _ -> { ForecastModel.Root.projects = [] }
+                 | Error _ -> { Forecast.Root.projects = [] }
     Assert.Equal(expected, actual)
 
 [<Theory>]
@@ -60,7 +58,7 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
     let actual = match rootJson |> Decode.fromString GithubModel.issueRootDecoder with
                   | Ok issue -> issue
                   | Error _ -> failwith "Issue Does not deserialise "
-    
+
     Assert.Equal(expected, actual)
 
 // [<Theory>]
@@ -72,7 +70,7 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
 //     let actual = match rootJson |> Decode.fromString GithubModel.projectDecoder with
 //                   | Ok project -> project
 //                   | Error _ -> failwith "Project Does not deserialise "
-    
+
 //     Assert.Equal(expected, actual)
 
 // [<Theory>]
@@ -84,7 +82,7 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
 //     let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with
 //                   | Ok projects -> projects
 //                   | Error _ -> failwith "Project Does not deserialise "
-    
+
 //     Assert.Equal(expected, actual)
 
 [<Theory>]
@@ -96,5 +94,5 @@ let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string) 
     let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with
                   | Ok projects -> projects
                   | Error _ -> failwith "Project Root Does not deserialise "
-    
+
     Assert.Equal(expected, actual)
