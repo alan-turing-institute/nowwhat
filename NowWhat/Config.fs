@@ -59,7 +59,8 @@ let lazySecrets =
            secrets
     )
 
-/// getSecrets only opens the config file once even if called multiple times
+/// Return server credentials from either environment variables (if defined) or
+/// a config file. The file will only be read once.
 let getSecrets () =
     try
       let secrets = lazySecrets.Force()
