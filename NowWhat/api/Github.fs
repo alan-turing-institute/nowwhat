@@ -197,5 +197,6 @@ let getIssueDetails (gitHubToken: string) issueNumber =
 *)
 
 let getIssues (): Issue list =
+  getAllProjectIssues "Project Tracker" |> ignore
   let sampleIssue: Issue = { id = "ABCD=+1234"; number = 1; title = "Example Issue"; body = "Some body text here"; state = "OPEN"}
   [sampleIssue]
