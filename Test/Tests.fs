@@ -43,9 +43,9 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) =
 [<Theory>]
 [<InlineData("rootSerialised.json")>]
 let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
-    let expected =  { Forecast.Root.projects = [{ id = 1684536; name = "Time Off"; color = "black"; code = None; notes = None }] }
+    let expected =  { ForecastModel.Root.projects = [{ id = 1684536; name = "Time Off"; color = "black"; code = None; notes = None }] }
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
-    let actual = match rootJson |> Decode.fromString Forecast.rootDecoder with
+    let actual = match rootJson |> Decode.fromString ForecastModel.rootDecoder with
                  | Ok projects -> projects
-                 | Error _ -> { Forecast.Root.projects = [] }
+                 | Error _ -> { ForecastModel.Root.projects = [] }
     Assert.Equal(expected, actual)

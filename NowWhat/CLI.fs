@@ -7,27 +7,27 @@ let nowwhat argv =
   try
     printfn "Now what?"
     let githubIssues =
-        Github.ProjectBoard
-        |> Github.getAllProjectIssues
+        GithubAPI.ProjectBoard
+        |> GithubAPI.getAllProjectIssues
         |> snd
         |> Array.filter (fun (_, _, status, _) -> status = "OPEN")
     printfn "Number of open issues in Project tracker: %d" githubIssues.Length
 
-    let forecastProjects = Forecast.getProjects()
+    let forecastProjects = ForecastAPI.getProjects()
     printfn $"Number of projects in Forecast: {(forecastProjects.Projects |> Seq.length)}"
 
     0
 
   with
-    | Forecast.UnauthorisedException(string) ->
+    | ForecastAPI.UnauthorisedException(string) ->
       printfn $"Error in Forecast authorisation: {string}"
       -1
-    | Forecast.FailedException(string) ->
+    | ForecastAPI.FailedException(string) ->
       printfn $"Error retrieving Forecast data: {string}"
       -2
     | Config.SecretLoadException(string) ->
       printfn $"Error loading secrets: {string}"
       -3
-    | other -> 
-      printfn $"Other exception: {other}" 
+    | other ->
+      printfn $"Other exception: {other}"
       -4
