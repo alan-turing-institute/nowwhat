@@ -48,3 +48,6 @@ let getPlaceholders () =
 
 let getProjects () =
   forecastRequest "projects" |> Projects.Parse
+
+//let getProjects2 () =
+//  forecastRequest "projects" |>

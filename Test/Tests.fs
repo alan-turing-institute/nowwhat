@@ -4,7 +4,6 @@ open System
 open System.IO
 open Xunit
 open NowWhat.CLI
-open NowWhat.API
 open NowWhat.DomainModel
 open Thoth.Json.Net
 
@@ -24,7 +23,7 @@ type RedirectStdOut(fileNameStub: string) =
             capturedStdOut.Flush()
             Console.SetOut(consoleStdOut)
 
-let StdOutMatches (fileNameStub: string) =
+let stdOutMatches (fileNameStub: string) =
     let expectedPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.txt"
     let actualPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.new.txt"
     Assert.Equal(File.ReadAllText(expectedPath), File.ReadAllText(actualPath))
@@ -38,7 +37,7 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) =
     using (new RedirectStdOut(fileNameStub)) ( fun _ ->
         nowwhat ()
     ) |> ignore
-    Assert.True(StdOutMatches(fileNameStub))
+    Assert.True(stdOutMatches fileNameStub)
 
 [<Theory>]
 [<InlineData("rootSerialised.json")>]
