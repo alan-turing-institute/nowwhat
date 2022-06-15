@@ -155,9 +155,15 @@ let getAllProjectIssues (projectName: string) =
       |> Array.exactlyOne
       |> fun project ->
         let projectName = project.Node.Name, project.Node.Number
-        let cards =
+        let cards: (Issue * string) array =
           project.Node.Columns.Edges
-          |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> x.Node.Content.Number, x.Node.Content.Title, x.Node.Content.State, x.Cursor) )
+          |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
+            id = x.Node.Id;
+            number = x.Node.Content.Number;
+            title = x.Node.Content.Title;
+            body = x.Node.Content.Body;
+            state = x.Node.Content.State
+          }, x.Cursor)) )
           // TODO: Collect results into some reasonable type instead of a tuple
         projectName, cards
 
@@ -168,7 +174,7 @@ let getAllProjectIssues (projectName: string) =
         else
           issueData
           |> Array.last
-          |> fun (number, title, state, c) -> Some c
+          |> fun (_, c) -> Some c
 
     match nextCursor with
     | Some _ -> getProjectIssues projectName nextCursor (Some proj, Array.append (snd acc) issueData)
