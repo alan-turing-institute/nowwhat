@@ -3,6 +3,7 @@ module NowWhat.API.Github
 open HttpFs.Client
 open Hopac
 open FSharp.Data
+open NowWhat.Config
 
 type ProjectIssuesFromGraphQL = JsonProvider<"api/sample-json/gh-project-issues.json">
 type IssueDetailsFromGraphQL = JsonProvider<"api/sample-json/gh-issue-details.json">
@@ -32,11 +33,14 @@ let runGithubQuery (gitHubToken: string) body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
-let getAllProjectIssues (gitHubToken: string) projectName =
+let getAllProjectIssues (projectName: string) =
   // the parent function is only wrapping up the recursive call that deals with paging of the responses
+  let githubToken = match getSecrets () with
+                    | Ok secrets -> secrets.githubToken
+                    | Error err -> raise err
 
   let rec getProjectIssues projectName cursor acc =
-    let queryTemplate = System.IO.File.ReadAllText "api/queries/issues-by-project-graphql.json"
+    let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
     let query =
@@ -51,7 +55,7 @@ let getAllProjectIssues (gitHubToken: string) projectName =
       cursorQuery.Replace("PROJECTNAME", $"\\\"{projectName}\\\"")
       |> formatQuery
 
-    let result = runGithubQuery gitHubToken query
+    let result = runGithubQuery githubToken query
 
     // parse the response using the type provider
     let issues = ProjectIssuesFromGraphQL.Parse result

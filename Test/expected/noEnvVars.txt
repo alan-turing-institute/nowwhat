@@ -1,2 +1,0 @@
-Now what?
-ERROR: Forecast API authorisation failed. Status code: 401; Message: {"reason":"missing-token","account_id":""}

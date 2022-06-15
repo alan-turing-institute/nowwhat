@@ -38,3 +38,9 @@ dotnet run
 ### Testing
 
 See [testing guidelines](Test/README.md).
+
+### Writing documentation
+
+See 
+- [`FSharp.Formatting`](https://fsprojects.github.io/FSharp.Formatting/) for the documentation system
+- [XML documentation](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/xml-documentation) for writing docs
