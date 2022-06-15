@@ -12,11 +12,6 @@ exception UnauthorisedException of string
 
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
-type People = JsonProvider<"api/sample-json/forecast-people.json">
-type Assignments = JsonProvider<"api/sample-json/forecast-assignments.json">
-type Clients = JsonProvider<"api/sample-json/forecast-clients.json">
-type Placeholders = JsonProvider<"api/sample-json/forecast-placeholders.json">
-
 let forecastRequest (endpoint: string) =
   let secrets = match getSecrets () with
                 | Ok secrets -> secrets
