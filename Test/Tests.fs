@@ -63,26 +63,38 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
     
     Assert.Equal(expected, actual)
 
-[<Theory>]
-[<InlineData("GithubProjectSerialised.json")>]
-let ``test Github Project JSON deserialisation`` (jsonFileName: string) =
-    let expected = { GithubModel.Project.name="Project Tracker"; GithubModel.Project.number=2 }
-    let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
-    // printfn $"Expected Issue: \n{expected}"
-    let actual = match rootJson |> Decode.fromString GithubModel.projectDecoder with
-                  | Ok project -> project
-                  | Error _ -> failwith "Project Does not deserialise "
+// [<Theory>]
+// [<InlineData("GithubProjectSerialised.json")>]
+// let ``test Github Project JSON deserialisation`` (jsonFileName: string) =
+//     let expected = { GithubModel.Project.name="Project Tracker"; GithubModel.Project.number=2 }
+//     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
+//     // printfn $"Expected Issue: \n{expected}"
+//     let actual = match rootJson |> Decode.fromString GithubModel.projectDecoder with
+//                   | Ok project -> project
+//                   | Error _ -> failwith "Project Does not deserialise "
     
-    Assert.Equal(expected, actual)
+//     Assert.Equal(expected, actual)
+
+// [<Theory>]
+// [<InlineData("GithubProjectsSerialised.json")>]
+// let ``test Github Projects JSON deserialisation`` (jsonFileName: string) =
+//     let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"}]}
+//     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
+//     // printfn $"Expected Issue: \n{expected}"
+//     let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with
+//                   | Ok projects -> projects
+//                   | Error _ -> failwith "Project Does not deserialise "
+    
+//     Assert.Equal(expected, actual)
 
 [<Theory>]
 [<InlineData("GithubProjectsSerialised.json")>]
-let ``test Github Projects JSON deserialisation`` (jsonFileName: string) =
-    let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"}]}
+let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string) =
+    let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"; columns=[]}]}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
     // printfn $"Expected Issue: \n{expected}"
     let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with
                   | Ok projects -> projects
-                  | Error _ -> failwith "Project Does not deserialise "
+                  | Error _ -> failwith "Project Root Does not deserialise "
     
     Assert.Equal(expected, actual)

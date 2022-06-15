@@ -6,7 +6,11 @@
             {
               "node": {
                 "number": 2,
-                "name": "Project Tracker"
+                "name": "Project Tracker",
+                "columns": {
+                    "edges": [
+                    ]
+                }
               }
             }
           ]
