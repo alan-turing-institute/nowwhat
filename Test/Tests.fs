@@ -5,7 +5,6 @@ open System.IO
 open Xunit
 open NowWhat.CLI
 open NowWhat.API
-open NowWhat.DomainModel
 open Thoth.Json.Net
 
 let fixtureDir: string = $"{__SOURCE_DIRECTORY__}/fixtures"
@@ -52,10 +51,10 @@ let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
 [<Theory>]
 [<InlineData("issueSerialised.json")>]
 let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
-    let expected = { GithubModel.IssueRoot.issue = {number = 1; }}
+    let expected = { Github.IssueRoot.issue = {number = 1; }}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
     // printfn $"Expected Issue: \n{expected}"
-    let actual = match rootJson |> Decode.fromString GithubModel.issueRootDecoder with
+    let actual = match rootJson |> Decode.fromString Github.issueRootDecoder with
                   | Ok issue -> issue
                   | Error _ -> failwith "Issue Does not deserialise "
 
@@ -64,10 +63,10 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
 // [<Theory>]
 // [<InlineData("GithubProjectSerialised.json")>]
 // let ``test Github Project JSON deserialisation`` (jsonFileName: string) =
-//     let expected = { GithubModel.Project.name="Project Tracker"; GithubModel.Project.number=2 }
+//     let expected = { Github.Project.name="Project Tracker"; Github.Project.number=2 }
 //     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
 //     // printfn $"Expected Issue: \n{expected}"
-//     let actual = match rootJson |> Decode.fromString GithubModel.projectDecoder with
+//     let actual = match rootJson |> Decode.fromString Github.projectDecoder with
 //                   | Ok project -> project
 //                   | Error _ -> failwith "Project Does not deserialise "
 
@@ -76,10 +75,10 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
 // [<Theory>]
 // [<InlineData("GithubProjectsSerialised.json")>]
 // let ``test Github Projects JSON deserialisation`` (jsonFileName: string) =
-//     let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"}]}
+//     let expected = { Github.ProjectRoot.projects = [{number = 2; name="Project Tracker"}]}
 //     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
 //     // printfn $"Expected Issue: \n{expected}"
-//     let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with
+//     let actual = match rootJson |> Decode.fromString Github.projectRootDecoder with
 //                   | Ok projects -> projects
 //                   | Error _ -> failwith "Project Does not deserialise "
 
@@ -88,10 +87,10 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
 [<Theory>]
 [<InlineData("GithubProjectsSerialised.json")>]
 let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string) =
-    let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"; columns=[{name="Suggested"}]}]}
+    let expected = { Github.ProjectRoot.projects = [{number = 2; name="Project Tracker"; columns=[{name="Suggested"}]}]}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
     // printfn $"Expected Issue: \n{expected}"
-    let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with
+    let actual = match rootJson |> Decode.fromString Github.projectRootDecoder with
                   | Ok projects -> projects
                   | Error _ -> failwith "Project Root Does not deserialise "
 

@@ -3,9 +3,36 @@ module NowWhat.API.Github
 open HttpFs.Client
 open Hopac
 open FSharp.Data
+open Thoth.Json.Net
 open NowWhat.Config
 
-/// Type to describe the kind of project returned by GitHub
+(* ---------------------------------------------------------------------------------------------------
+
+   GitHub data model
+
+*)
+
+type Column = {
+  name : string
+}
+
+type Project = {
+  number: int;
+  name: string;
+  columns: Column List;
+}
+
+type ProjectRoot = {
+  projects: Project List
+}
+
+/// There are currently **two** Issue types -- a placeholder (Issue) allowing work to continue on
+/// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
+/// which will eventually replace Issue.
+type Issue_WIP = {
+    number: int;
+}
+
 type Issue = {
   id: string
   number: int
@@ -13,6 +40,49 @@ type Issue = {
   body: string
   state: string
 }
+
+// Can we elide this?
+type IssueRoot = {
+  issue: Issue_WIP;
+}
+
+let columnDecoder : Decoder<Column> =
+    Decode.object (
+        fun get -> {
+          Column.name = get.Required.At ["node"; "name"] Decode.string
+        }
+    )
+
+let projectDecoder : Decoder<Project> =
+    Decode.object (
+        fun get -> {
+          Project.number = get.Required.At ["node"; "number"] Decode.int
+          Project.name = get.Required.At ["node"; "name"] Decode.string
+          Project.columns = get.Required.At ["node";"columns"; "edges"] (Decode.list columnDecoder)
+        }
+    )
+
+let projectRootDecoder : Decoder<ProjectRoot> =
+    Decode.object (
+        fun get -> {
+          ProjectRoot.projects = get.Required.At ["data"; "repository"; "projects"; "edges"] (Decode.list projectDecoder)
+        }
+    )
+
+let issueDecoder : Decoder<Issue_WIP> =
+    Decode.object (
+        fun get -> {
+            Issue_WIP.number = get.Required.Field "number" Decode.int
+            // Issue.url= get.Required.Field "url" Decode.string;
+        }
+    )
+
+let issueRootDecoder : Decoder<IssueRoot> =
+  Decode.object (
+    fun get -> {
+      IssueRoot.issue = get.Required.At ["data"; "repository"; "issue"] issueDecoder
+    }
+  )
 
 (* ---------------------------------------------------------------------------------------------------
 
@@ -102,6 +172,7 @@ let getAllProjectIssues (projectName: string) =
 
   getProjectIssues projectName None (None, [||])
 
+// Currently unused
 let getIssueDetails (gitHubToken: string) issueNumber =
     let queryTemplate = System.IO.File.ReadAllText "api/queries/issue-details-graphql.json"
 
