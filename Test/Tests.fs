@@ -4,10 +4,8 @@ open System
 open System.IO
 open Xunit
 open NowWhat.CLI
-open NowWhat.API
 open NowWhat.DomainModel
 open Thoth.Json.Net
-
 
 
 type RedirectStdOut(fileNameStub: string) =
@@ -24,7 +22,7 @@ type RedirectStdOut(fileNameStub: string) =
             capturedStdOut.Flush()
             Console.SetOut(consoleStdOut)
 
-let StdOutMatches (fileNameStub: string) =
+let stdOutMatches (fileNameStub: string) =
     let expectedPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.txt"
     let actualPath = $"{__SOURCE_DIRECTORY__}/fixtures/{fileNameStub}.new.txt"
     Assert.Equal(File.ReadAllText(expectedPath), File.ReadAllText(actualPath))
@@ -38,13 +36,13 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) =
     using (new RedirectStdOut(fileNameStub)) ( fun _ ->
         nowwhat ()
     ) |> ignore
-    Assert.True(StdOutMatches(fileNameStub))
+    Assert.True(stdOutMatches fileNameStub)
 
 [<Theory>]
 [<InlineData("rootSerialised.json")>]
 let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
     let expected =  { ForecastModel.Root.projects = [{ id = 1684536; name = "Time Off"; color = "black"; code = None; notes = None }] }
-    let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
+    let rootJson = File.ReadAllText($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}")
     let actual = match rootJson |> Decode.fromString ForecastModel.rootDecoder with
                  | Ok projects -> projects
                  | Error _ -> { ForecastModel.Root.projects = [] }

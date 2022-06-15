@@ -1,21 +1,15 @@
 module NowWhat.API.ForecastAPI
-open NowWhat.Config
 
-open FSharp.Data
 open HttpFs.Client
 open Hopac
+open Thoth.Json.Net
+open NowWhat.Config
+open NowWhat.DomainModel
 
 exception FailedException of string
 exception UnauthorisedException of string
 
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
-
-
-type People = JsonProvider<"api/sample-json/forecast-people.json">
-type Assignments = JsonProvider<"api/sample-json/forecast-assignments.json">
-type Clients = JsonProvider<"api/sample-json/forecast-clients.json">
-type Placeholders = JsonProvider<"api/sample-json/forecast-placeholders.json">
-type Projects = JsonProvider<"api/sample-json/forecast-projects.json">
 
 let forecastRequest (endpoint: string) =
   let secrets = match getSecrets () with
@@ -33,18 +27,9 @@ let forecastRequest (endpoint: string) =
       | _ -> raise (FailedException $"Forecast request failed. Status code: {response.statusCode}; Message: {responseBody}")
   responseBody
 
-// Forecast endpoint functions
-let getPeople () =
-  forecastRequest  "people" |> People.Parse
+// Other useful endpoints are: people; assignments; clients; placeholders.
 
-let getAssignments () =
-  forecastRequest "assignments" |> Assignments.Parse
-
-let getClients () =
-  forecastRequest "clients" |> Clients.Parse
-
-let getPlaceholders () =
-  forecastRequest "placeholders" |> Placeholders.Parse
-
-let getProjects () =
-  forecastRequest "projects" |> Projects.Parse
+let getProjects (): ForecastModel.Project List =
+  match forecastRequest "projects" |> Decode.fromString ForecastModel.rootDecoder with
+  | Ok root -> root.projects
+  | Error _ -> failwith "Unable to deserialise Forecast response."
