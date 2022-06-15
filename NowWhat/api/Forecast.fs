@@ -9,9 +9,13 @@ open NowWhat.Config
 exception FailedException of string
 exception UnauthorisedException of string
 
-/// Type to describe the kind of project returned by Forecast
+(* ---------------------------------------------------------------------------------------------------
+
+   Forecast data model
+
+*)
 type Project = {
-  id:        int           
+  id:        int
   harvestId: int option
   clientId:  int option
   name:      string
@@ -20,39 +24,14 @@ type Project = {
   notes:     string option
 }
 
-(* ---------------------------------------------------------------------------------------------------
-   
-   Interface to the Forecast API
-
-*)
-
-let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
-
-
-let forecastRequest (endpoint: string): string =
-  let secrets = match getSecrets () with
-                | Ok secrets -> secrets
-                | Error err -> raise (FailedException("Forecast secrets could not be loaded. {err.ToString()}"))
-  let response = Request.createUrl Get (ForecastUrl + endpoint)
-              |> Request.setHeader (Authorization ("Bearer " + secrets.forecastToken))
-              |> Request.setHeader (Custom ("Forecast-Account-ID", secrets.forecastId))
-              |> getResponse
-              |> run
-  let responseBody = response |> Response.readBodyAsString |> run
-  if (response.statusCode < 200) || (response.statusCode > 299) then
-    match response.statusCode with
-      | 401 -> raise (UnauthorisedException $"Forecast API authorisation failed. Status code: {response.statusCode}; Message: {responseBody}")
-      | _ -> raise (FailedException $"Forecast request failed. Status code: {response.statusCode}; Message: {responseBody}")
-  responseBody
-
+// Can we elide this?
+type Root = {
+  projects: Project List
+}
 
 (* ---------------------------------------------------------------------------------------------------
    Get Forecast objects as F# types
    *)
-
-type Root = {
-  projects: Project List
-}
 
 let projectDecoder : Decoder<Project> =
     Decode.object (
@@ -74,6 +53,29 @@ let rootDecoder : Decoder<Root> =
     }
   )
 
+(* ---------------------------------------------------------------------------------------------------
+
+   Interface to the Forecast API
+
+*)
+
+let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
+
+let forecastRequest (endpoint: string): string =
+  let secrets = match getSecrets () with
+                | Ok secrets -> secrets
+                | Error err -> raise (FailedException("Forecast secrets could not be loaded. {err.ToString()}"))
+  let response = Request.createUrl Get (ForecastUrl + endpoint)
+              |> Request.setHeader (Authorization ("Bearer " + secrets.forecastToken))
+              |> Request.setHeader (Custom ("Forecast-Account-ID", secrets.forecastId))
+              |> getResponse
+              |> run
+  let responseBody = response |> Response.readBodyAsString |> run
+  if (response.statusCode < 200) || (response.statusCode > 299) then
+    match response.statusCode with
+      | 401 -> raise (UnauthorisedException $"Forecast API authorisation failed. Status code: {response.statusCode}; Message: {responseBody}")
+      | _ -> raise (FailedException $"Forecast request failed. Status code: {response.statusCode}; Message: {responseBody}")
+  responseBody
 
 (* ---------------------------------------------------------------------------------------------------
    Public interface to this module

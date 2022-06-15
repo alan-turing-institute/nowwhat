@@ -46,6 +46,10 @@ type IssueRoot = {
   issue: Issue_WIP;
 }
 
+(* ---------------------------------------------------------------------------------------------------
+   Get Forecast objects as F# types
+   *)
+
 let columnDecoder : Decoder<Column> =
     Decode.object (
         fun get -> {
@@ -102,8 +106,6 @@ let allProjectBoards = [
   StandingRoles
 ]
 
-
-
 // TODO: async?
 /// Query Github GraphQL endpoint
 /// body is json with GraphQL query element
@@ -120,13 +122,17 @@ let runGithubQuery (gitHubToken: string) body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
-let getAllProjectIssues (projectName: string) =
+(* ---------------------------------------------------------------------------------------------------
+   Public interface to this module
+*)
+
+let getProjectIssues (projectName: string): Issue List =
   // the parent function is only wrapping up the recursive call that deals with paging of the responses
   let githubToken = match getSecrets () with
                     | Ok secrets -> secrets.githubToken
                     | Error err -> raise err
 
-  let rec getProjectIssues projectName cursor acc =
+  let rec getProjectIssues_page projectName cursor acc =
     let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
@@ -148,16 +154,21 @@ let getAllProjectIssues (projectName: string) =
     let issues = ProjectIssuesFromGraphQL.Parse result
     // run WIP implementation in parallel with old until migration-time
     let issues2 = result |> Decode.fromString projectRootDecoder
-    let proj, issueData =
+    let issueData =
       issues.Data.Repository.Projects.Edges
       |> Array.exactlyOne
       |> fun project ->
         let projectName = project.Node.Name, project.Node.Number
-        let cards =
+        let cards: (Issue * string) array =
           project.Node.Columns.Edges
-          |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> x.Node.Content.Number, x.Node.Content.Title, x.Node.Content.State, x.Cursor) )
-          // TODO: Collect results into some reasonable type instead of a tuple
-        projectName, cards
+          |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
+            id = x.Node.Id;
+            number = x.Node.Content.Number;
+            title = x.Node.Content.Title;
+            body = x.Node.Content.Body;
+            state = x.Node.Content.State
+          }, x.Cursor)) )
+        cards
 
     // Cursor points to the last item returned, used for paging of the requests
     let nextCursor =
@@ -166,13 +177,13 @@ let getAllProjectIssues (projectName: string) =
         else
           issueData
           |> Array.last
-          |> fun (number, title, state, c) -> Some c
+          |> fun (_, c) -> Some c
 
     match nextCursor with
-    | Some _ -> getProjectIssues projectName nextCursor (Some proj, Array.append (snd acc) issueData)
-    | None -> (Some proj, Array.append (snd acc) issueData)
+    | Some _ -> getProjectIssues_page projectName nextCursor (Array.append acc issueData)
+    | None -> Array.append acc issueData
 
-  getProjectIssues projectName None (None, [||])
+  getProjectIssues_page projectName None [||] |> Array.map fst |> Array.toList
 
 // Currently unused
 let getIssueDetails (gitHubToken: string) issueNumber =
@@ -188,12 +199,3 @@ let getIssueDetails (gitHubToken: string) issueNumber =
     // parse the response using the type provider
     let issues = IssueDetailsFromGraphQL.Parse result
     issues.Data.Repository.Issue
-
-
-(* ---------------------------------------------------------------------------------------------------
-   Public interface to this module
-*)
-
-let getIssues (): Issue list =
-  let sampleIssue: Issue = { id = "ABCD=+1234"; number = 1; title = "Example Issue"; body = "Some body text here"; state = "OPEN"}
-  [sampleIssue]
