@@ -1,15 +1,16 @@
 module NowWhat.API.ForecastAPI
-open NowWhat.Config
 
 open FSharp.Data
 open HttpFs.Client
 open Hopac
+open Thoth.Json.Net
+open NowWhat.Config
+open NowWhat.DomainModel
 
 exception FailedException of string
 exception UnauthorisedException of string
 
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
-
 
 type People = JsonProvider<"api/sample-json/forecast-people.json">
 type Assignments = JsonProvider<"api/sample-json/forecast-assignments.json">
@@ -49,5 +50,7 @@ let getPlaceholders () =
 let getProjects () =
   forecastRequest "projects" |> Projects.Parse
 
-//let getProjects2 () =
-//  forecastRequest "projects" |>
+let getProjects2 (): ForecastModel.Project List =
+  match forecastRequest "projects" |> Decode.fromString ForecastModel.rootDecoder with
+  | Ok root -> root.projects
+  | Error _ -> failwith "Unable to deserialise Forecast response."

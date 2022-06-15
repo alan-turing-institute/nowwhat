@@ -8,7 +8,6 @@ open NowWhat.DomainModel
 open Thoth.Json.Net
 
 
-
 type RedirectStdOut(fileNameStub: string) =
     // Store native stdout for later use
     let consoleStdOut = Console.Out
