@@ -122,13 +122,13 @@ let runGithubQuery (gitHubToken: string) body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
-let getAllProjectIssues (projectName: string): Issue array =
+let getProjectIssues (projectName: string): Issue List =
   // the parent function is only wrapping up the recursive call that deals with paging of the responses
   let githubToken = match getSecrets () with
                     | Ok secrets -> secrets.githubToken
                     | Error err -> raise err
 
-  let rec getProjectIssues projectName cursor acc =
+  let rec getProjectIssues_page projectName cursor acc =
     let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
@@ -176,10 +176,10 @@ let getAllProjectIssues (projectName: string): Issue array =
           |> fun (_, c) -> Some c
 
     match nextCursor with
-    | Some _ -> getProjectIssues projectName nextCursor (Array.append acc issueData)
+    | Some _ -> getProjectIssues_page projectName nextCursor (Array.append acc issueData)
     | None -> Array.append acc issueData
 
-  getProjectIssues projectName None [||] |> Array.map fst
+  getProjectIssues_page projectName None [||] |> Array.map fst |> Array.toList
 
 // Currently unused
 let getIssueDetails (gitHubToken: string) issueNumber =
@@ -201,5 +201,5 @@ let getIssueDetails (gitHubToken: string) issueNumber =
    Public interface to this module
 *)
 
-let getIssues (): Issue list =
-  getAllProjectIssues "Project Tracker" |> Array.toList
+let getIssues (): Issue List =
+  getProjectIssues "Project Tracker"
