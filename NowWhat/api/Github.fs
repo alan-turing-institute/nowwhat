@@ -180,7 +180,7 @@ let getAllProjectIssues (projectName: string) =
     | Some _ -> getProjectIssues projectName nextCursor (Array.append acc issueData)
     | None -> Array.append acc issueData
 
-  getProjectIssues projectName None [||]
+  getProjectIssues projectName None [||] |> Array.map fst
 
 // Currently unused
 let getIssueDetails (gitHubToken: string) issueNumber =
