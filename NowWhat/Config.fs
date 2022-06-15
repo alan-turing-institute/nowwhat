@@ -63,7 +63,7 @@ let lazySecrets =
 
 /// Return server credentials from either environment variables (if defined) or
 /// a config file. The file will only be read once.
-let getSecrets (): Result<_,_> =
+let getSecrets (): Result<Secrets, exn> =
     try
       let secrets = lazySecrets.Force()
       Ok secrets
