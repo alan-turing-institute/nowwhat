@@ -54,11 +54,35 @@ let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
 [<Theory>]
 [<InlineData("issueSerialised.json")>]
 let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
-    let expected = { GithubModel.Root.issue = {id = 1; }}
+    let expected = { GithubModel.IssueRoot.issue = {number = 1; }}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
-    printfn $"Expected Issue: \n{expected}"
-    let actual = match rootJson |> Decode.fromString GithubModel.rootDecoder with
+    // printfn $"Expected Issue: \n{expected}"
+    let actual = match rootJson |> Decode.fromString GithubModel.issueRootDecoder with
                   | Ok issue -> issue
                   | Error _ -> failwith "Issue Does not deserialise "
     
     Assert.Equal(expected, actual)
+
+[<Theory>]
+[<InlineData("GithubProjectSerialised.json")>]
+let ``test Github Project JSON deserialisation`` (jsonFileName: string) =
+    let expected = { GithubModel.Project.name="Project Tracker"; GithubModel.Project.number=2 }
+    let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
+    // printfn $"Expected Issue: \n{expected}"
+    let actual = match rootJson |> Decode.fromString GithubModel.projectDecoder with
+                  | Ok project -> project
+                  | Error _ -> failwith "Project Does not deserialise "
+    
+    Assert.Equal(expected, actual)
+
+// [<Theory>]
+// [<InlineData("GithubProjectsSerialised.json")>]
+// let ``test Github Projects JSON deserialisation`` (jsonFileName: string) =
+//     let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"}]}
+//     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
+//     // printfn $"Expected Issue: \n{expected}"
+//     let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with
+//                   | Ok projects -> projects
+//                   | Error _ -> failwith "Project Does not deserialise "
+    
+//     Assert.Equal(expected, actual)
