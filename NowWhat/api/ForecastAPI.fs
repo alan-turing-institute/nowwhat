@@ -16,7 +16,6 @@ type People = JsonProvider<"api/sample-json/forecast-people.json">
 type Assignments = JsonProvider<"api/sample-json/forecast-assignments.json">
 type Clients = JsonProvider<"api/sample-json/forecast-clients.json">
 type Placeholders = JsonProvider<"api/sample-json/forecast-placeholders.json">
-type Projects = JsonProvider<"api/sample-json/forecast-projects.json">
 
 let forecastRequest (endpoint: string) =
   let secrets = match getSecrets () with
