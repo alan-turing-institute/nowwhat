@@ -1,4 +1,4 @@
-module NowWhat.API.GithubAPI
+module NowWhat.API.Github
 
 open HttpFs.Client
 open Hopac

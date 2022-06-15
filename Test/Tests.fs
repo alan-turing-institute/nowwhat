@@ -4,7 +4,7 @@ open System
 open System.IO
 open Xunit
 open NowWhat.CLI
-open NowWhat.DomainModel
+open NowWhat.API
 open Thoth.Json.Net
 
 let fixtureDir: string = $"{__SOURCE_DIRECTORY__}/fixtures"
@@ -41,9 +41,9 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) =
 [<Theory>]
 [<InlineData("rootSerialised.json")>]
 let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
-    let expected =  { ForecastModel.Root.projects = [{ id = 1684536; name = "Time Off"; color = "black"; code = None; notes = None }] }
+    let expected =  { Forecast.Root.projects = [{ id = 1684536; harvestId = None; clientId = None; name = "Time Off"; code = None; tags = []; notes = None }] }
     let rootJson = File.ReadAllText($"{fixtureDir}/{jsonFileName}")
-    let actual = match rootJson |> Decode.fromString ForecastModel.rootDecoder with
+    let actual = match rootJson |> Decode.fromString Forecast.rootDecoder with
                  | Ok projects -> projects
-                 | Error _ -> { ForecastModel.Root.projects = [] }
+                 | Error _ -> { Forecast.Root.projects = [] }
     Assert.Equal(expected, actual)
