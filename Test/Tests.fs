@@ -45,7 +45,7 @@ let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
     let rootJson = File.ReadAllText($"{fixtureDir}/{jsonFileName}")
     let actual = match rootJson |> Decode.fromString Forecast.rootDecoder with
                  | Ok projects -> projects
-                 | Error _ -> { Forecast.Root.projects = [] }
+                 | Error _ -> failwith "Forecast root does not deserialise"
     Assert.Equal(expected, actual)
 
 [<Theory>]
@@ -56,7 +56,7 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
     // printfn $"Expected Issue: \n{expected}"
     let actual = match rootJson |> Decode.fromString Github.issueRootDecoder with
                   | Ok issue -> issue
-                  | Error _ -> failwith "Issue Does not deserialise "
+                  | Error _ -> failwith "Issue does not deserialise"
 
     Assert.Equal(expected, actual)
 
@@ -68,6 +68,6 @@ let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string) 
     // printfn $"Expected Issue: \n{expected}"
     let actual = match rootJson |> Decode.fromString Github.projectRootDecoder with
                   | Ok projects -> projects
-                  | Error _ -> failwith "Project Root Does not deserialise "
+                  | Error _ -> failwith "Project Root does not deserialise"
 
     Assert.Equal(expected, actual)
