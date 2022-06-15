@@ -5,6 +5,21 @@ open Hopac
 open FSharp.Data
 open NowWhat.Config
 
+/// Type to describe the kind of project returned by GitHub
+type Issue = {
+  id: string
+  number: int
+  title: string
+  body: string
+  state: string
+}
+
+(* ---------------------------------------------------------------------------------------------------
+
+   Interface to the GitHub API
+
+*)
+
 type ProjectIssuesFromGraphQL = JsonProvider<"api/sample-json/gh-project-issues.json">
 type IssueDetailsFromGraphQL = JsonProvider<"api/sample-json/gh-issue-details.json">
 
@@ -16,6 +31,8 @@ let allProjectBoards = [
   ProjectBoard
   StandingRoles
 ]
+
+
 
 // TODO: async?
 /// Query Github GraphQL endpoint
@@ -98,3 +115,12 @@ let getIssueDetails (gitHubToken: string) issueNumber =
     // parse the response using the type provider
     let issues = IssueDetailsFromGraphQL.Parse result
     issues.Data.Repository.Issue
+
+
+(* ---------------------------------------------------------------------------------------------------
+   Public interface to this module
+*)
+
+let getIssues (): Issue list =
+  let sampleIssue: Issue = { id = "ABCD=+1234"; number = 1; title = "Example Issue"; body = "Some body text here"; state = "OPEN"}
+  [sampleIssue]

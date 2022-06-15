@@ -1,4 +1,4 @@
 Now what?
+Number of issues in GitHub: 1
 WARNING: You are using single-threaded workstation garbage collection, which means that parallel programs cannot scale.  Please configure your program to use server garbage collection.
-Number of open issues in Project tracker: 1
 Number of projects in Forecast: 262
