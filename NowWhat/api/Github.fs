@@ -46,6 +46,10 @@ type IssueRoot = {
   issue: Issue_WIP;
 }
 
+(* ---------------------------------------------------------------------------------------------------
+   Get Forecast objects as F# types
+   *)
+
 let columnDecoder : Decoder<Column> =
     Decode.object (
         fun get -> {
@@ -101,8 +105,6 @@ let allProjectBoards = [
   ProjectBoard
   StandingRoles
 ]
-
-
 
 // TODO: async?
 /// Query Github GraphQL endpoint
