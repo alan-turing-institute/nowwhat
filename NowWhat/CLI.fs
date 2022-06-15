@@ -7,7 +7,7 @@ let nowwhat argv =
   try
     printfn "Now what?"
 
-    let gitHubIssues = Github.getIssues ()
+    let gitHubIssues = Github.getProjectIssues "Project Tracker"
     printfn $"Number of issues in GitHub: {gitHubIssues |> Seq.length}"
 
     let forecastProjects = Forecast.getProjects ()

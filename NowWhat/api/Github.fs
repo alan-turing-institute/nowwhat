@@ -122,6 +122,10 @@ let runGithubQuery (gitHubToken: string) body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
+(* ---------------------------------------------------------------------------------------------------
+   Public interface to this module
+*)
+
 let getProjectIssues (projectName: string): Issue List =
   // the parent function is only wrapping up the recursive call that deals with paging of the responses
   let githubToken = match getSecrets () with
@@ -195,11 +199,3 @@ let getIssueDetails (gitHubToken: string) issueNumber =
     // parse the response using the type provider
     let issues = IssueDetailsFromGraphQL.Parse result
     issues.Data.Repository.Issue
-
-
-(* ---------------------------------------------------------------------------------------------------
-   Public interface to this module
-*)
-
-let getIssues (): Issue List =
-  getProjectIssues "Project Tracker"
