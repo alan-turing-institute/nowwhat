@@ -9,7 +9,11 @@
                 "name": "Project Tracker",
                 "columns": {
                     "edges": [
-                    ]
+                        {
+                            "node": {
+                            "name": "Suggested"
+                        }
+                        }]
                 }
               }
             }
