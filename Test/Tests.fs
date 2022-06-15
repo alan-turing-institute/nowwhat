@@ -90,7 +90,7 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
 [<Theory>]
 [<InlineData("GithubProjectsSerialised.json")>]
 let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string) =
-    let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"; columns=[]}]}
+    let expected = { GithubModel.ProjectRoot.projects = [{number = 2; name="Project Tracker"; columns=[{name="Suggested"}]}]}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
     // printfn $"Expected Issue: \n{expected}"
     let actual = match rootJson |> Decode.fromString GithubModel.projectRootDecoder with

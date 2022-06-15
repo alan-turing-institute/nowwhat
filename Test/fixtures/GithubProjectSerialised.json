@@ -1,6 +1,10 @@
 {
-    "node": {
+    "projects":[{
         "number": 2,
-        "name": "Project Tracker"
-    }
+        "name": "Project Tracker",
+        "columns": [{
+            "name": "Suggested",
+            "issues":[]
+        }]
+    }]
 }
