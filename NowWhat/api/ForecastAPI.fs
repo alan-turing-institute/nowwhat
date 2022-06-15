@@ -47,10 +47,7 @@ let getClients () =
 let getPlaceholders () =
   forecastRequest "placeholders" |> Placeholders.Parse
 
-let getProjects () =
-  forecastRequest "projects" |> Projects.Parse
-
-let getProjects2 (): ForecastModel.Project List =
+let getProjects (): ForecastModel.Project List =
   match forecastRequest "projects" |> Decode.fromString ForecastModel.rootDecoder with
   | Ok root -> root.projects
   | Error _ -> failwith "Unable to deserialise Forecast response."
