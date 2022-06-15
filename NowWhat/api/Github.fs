@@ -30,7 +30,7 @@ type ProjectRoot = {
 /// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
 /// which will eventually replace Issue.
 type Issue_WIP = {
-    number: int;
+  number: int;
 }
 
 type Issue = {
