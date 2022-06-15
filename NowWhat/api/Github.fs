@@ -177,10 +177,10 @@ let getAllProjectIssues (projectName: string) =
           |> fun (_, c) -> Some c
 
     match nextCursor with
-    | Some _ -> getProjectIssues projectName nextCursor (Some proj, Array.append (snd acc) issueData)
-    | None -> (Some proj, Array.append (snd acc) issueData)
+    | Some _ -> getProjectIssues projectName nextCursor (Array.append acc issueData)
+    | None -> Array.append acc issueData
 
-  getProjectIssues projectName None (None, [||])
+  getProjectIssues projectName None [||]
 
 // Currently unused
 let getIssueDetails (gitHubToken: string) issueNumber =
