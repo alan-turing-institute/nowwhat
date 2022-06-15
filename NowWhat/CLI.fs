@@ -28,4 +28,6 @@ let nowwhat argv =
     | Config.SecretLoadException(string) ->
       printfn $"Error loading secrets: {string}"
       -3
-    | _ -> -4
+    | other -> 
+      printfn $"Other exception: {other}" 
+      -4
