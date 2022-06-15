@@ -10,6 +10,7 @@
     <Compile Include="api/GithubAPI.fs" />
     <Compile Include="api/ForecastAPI.fs" />
     <Compile Include="domainmodel/ForecastModel.fs" />
+    <Compile Include="domainmodel/GithubModel.fs" />
     <Compile Include="CLI.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
