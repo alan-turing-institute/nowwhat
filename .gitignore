@@ -1,9 +1,12 @@
 credentials.sh
+secrets.sh
 playground.fsx
 .DS_Store
 .fake
 .ionide
 .vscode
+
+TestResults/
 
 Dd]ebug/
 [Rr]elease/
