@@ -6,18 +6,12 @@ open NowWhat.Config
 let nowwhat argv =
   try
     printfn "Now what?"
-    let githubIssues =
-        Github.ProjectBoard
-        |> Github.getAllProjectIssues
-        |> snd
-        |> Array.filter (fun (_, _, status, _) -> status = "OPEN")
-    printfn "Number of open issues in Project tracker: %d" githubIssues.Length
+
+    let gitHubIssues = Github.getIssues ()
+    printfn $"Number of issues in GitHub: {gitHubIssues |> Seq.length}"
 
     let forecastProjects = Forecast.getProjects ()
     printfn $"Number of projects in Forecast: {forecastProjects |> Seq.length}"
-
-    // for p in forecastProjects do
-    //     printfn $"{p}"
 
     0
 
