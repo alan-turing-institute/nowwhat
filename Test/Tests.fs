@@ -23,13 +23,12 @@ type RedirectStdOut(fileNameStub: string) =
             capturedStdOut.Flush()
             Console.SetOut(consoleStdOut)
 
-let stdOutMatches (fileNameStub: string) =
+let expectStdOut (fileNameStub: string): unit =
     let expectedPath = $"{fixtureDir}/{fileNameStub}.txt"
     let actualPath = $"{fixtureDir}/{fileNameStub}.new.txt"
     Assert.Equal(File.ReadAllText(expectedPath), File.ReadAllText(actualPath))
     // We will only delete the file and return 'true' if the previous Assert succeeded
     File.Delete(actualPath)
-    true
 
 [<Theory>]
 [<InlineData("withEnvVars")>]
@@ -37,7 +36,7 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) =
     using (new RedirectStdOut(fileNameStub)) ( fun _ ->
         nowwhat ()
     ) |> ignore
-    Assert.True(stdOutMatches fileNameStub)
+    expectStdOut fileNameStub
 
 [<Theory>]
 [<InlineData("rootSerialised.json")>]
