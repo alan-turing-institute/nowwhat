@@ -1,0 +1,25 @@
+{
+    "data": {
+      "repository": {
+        "projects": {
+          "edges": [
+            {
+              "node": {
+                "number": 2,
+                "name": "Project Tracker",
+                "columns": {
+                  "edges": [
+                    {
+                      "node": {
+                        "name": "Suggested"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }

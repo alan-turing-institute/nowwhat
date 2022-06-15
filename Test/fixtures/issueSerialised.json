@@ -1,0 +1,77 @@
+{
+    "data": {
+      "repository": {
+        "issue": {
+          "number": 1,
+          "title": "Some project title",
+          "url": "https://github.com/alan-turing-institute/Hut23/issues/1",
+          "bodyText": "Some issue text here",
+          "reactionGroups": [
+            {
+              "content": "THUMBS_UP",
+              "users": {
+                "edges": [
+                  {
+                    "node": {
+                      "login": "mylogin",
+                      "name": "Name"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": "THUMBS_DOWN",
+              "users": {
+                "edges": [
+                  {
+                    "node": {
+                      "login": "mylogin",
+                      "name": "Name"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "content": "LAUGH",
+              "users": {
+                "edges": []
+              }
+            },
+            {
+              "content": "HOORAY",
+              "users": {
+                "edges": []
+              }
+            },
+            {
+              "content": "CONFUSED",
+              "users": {
+                "edges": []
+              }
+            },
+            {
+              "content": "HEART",
+              "users": {
+                "edges": []
+              }
+            },
+            {
+              "content": "ROCKET",
+              "users": {
+                "edges": []
+              }
+            },
+            {
+              "content": "EYES",
+              "users": {
+                "edges": []
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+  
