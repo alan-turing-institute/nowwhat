@@ -150,7 +150,7 @@ let getAllProjectIssues (projectName: string): Issue array =
     let issues = ProjectIssuesFromGraphQL.Parse result
     // run WIP implementation in parallel with old until migration-time
     let issues2 = result |> Decode.fromString projectRootDecoder
-    let proj, issueData =
+    let issueData =
       issues.Data.Repository.Projects.Edges
       |> Array.exactlyOne
       |> fun project ->
@@ -164,8 +164,7 @@ let getAllProjectIssues (projectName: string): Issue array =
             body = x.Node.Content.Body;
             state = x.Node.Content.State
           }, x.Cursor)) )
-          // TODO: Collect results into some reasonable type instead of a tuple
-        projectName, cards
+        cards
 
     // Cursor points to the last item returned, used for paging of the requests
     let nextCursor =
