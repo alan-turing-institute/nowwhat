@@ -11,7 +11,7 @@ exception UnauthorisedException of string
 
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
-let forecastRequest (endpoint: string) =
+let forecastRequest (endpoint: string): string =
   let secrets = match getSecrets () with
                 | Ok secrets -> secrets
                 | Error err -> raise (FailedException("Forecast secrets could not be loaded. {err.ToString()}"))

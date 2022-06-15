@@ -98,4 +98,3 @@ let getIssueDetails (gitHubToken: string) issueNumber =
     // parse the response using the type provider
     let issues = IssueDetailsFromGraphQL.Parse result
     issues.Data.Repository.Issue
-
