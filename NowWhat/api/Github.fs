@@ -146,6 +146,7 @@ let getAllProjectIssues (projectName: string) =
 
     // parse the response using the type provider
     let issues = ProjectIssuesFromGraphQL.Parse result
+    let issues2 = result |> Decode.fromString projectRootDecoder
     let proj, issueData =
       issues.Data.Repository.Projects.Edges
       |> Array.exactlyOne

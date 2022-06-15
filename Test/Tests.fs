@@ -32,7 +32,7 @@ let expectStdOut (fileNameStub: string): unit =
 
 [<Theory>]
 [<InlineData("withEnvVars")>]
-let ``End-to-end test with environment variables`` (fileNameStub: string) =
+let ``End-to-end test with environment variables`` (fileNameStub: string): unit =
     using (new RedirectStdOut(fileNameStub)) ( fun _ ->
         nowwhat ()
     ) |> ignore
@@ -40,7 +40,7 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) =
 
 [<Theory>]
 [<InlineData("rootSerialised.json")>]
-let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
+let ``test Forecast JSON deserialisation`` (jsonFileName: string): unit =
     let expected =  { Forecast.Root.projects = [{ id = 1684536; harvestId = None; clientId = None; name = "Time Off"; code = None; tags = []; notes = None }] }
     let rootJson = File.ReadAllText($"{fixtureDir}/{jsonFileName}")
     let actual = match rootJson |> Decode.fromString Forecast.rootDecoder with
@@ -50,7 +50,7 @@ let ``test Forecast JSON deserialisation`` (jsonFileName: string) =
 
 [<Theory>]
 [<InlineData("issueSerialised.json")>]
-let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
+let ``test Github Issue JSON deserialisation`` (jsonFileName: string): unit =
     let expected = { Github.IssueRoot.issue = {number = 1; }}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
     // printfn $"Expected Issue: \n{expected}"
@@ -62,7 +62,7 @@ let ``test Github Issue JSON deserialisation`` (jsonFileName: string) =
 
 [<Theory>]
 [<InlineData("GithubProjectsSerialised.json")>]
-let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string) =
+let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string): unit =
     let expected = { Github.ProjectRoot.projects = [{number = 2; name="Project Tracker"; columns=[{name="Suggested"}]}]}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
     // printfn $"Expected Issue: \n{expected}"
