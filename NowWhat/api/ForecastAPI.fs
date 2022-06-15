@@ -1,6 +1,5 @@
 module NowWhat.API.ForecastAPI
 
-open FSharp.Data
 open HttpFs.Client
 open Hopac
 open Thoth.Json.Net
