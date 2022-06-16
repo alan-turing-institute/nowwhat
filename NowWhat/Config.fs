@@ -31,27 +31,28 @@ let loadConfig () : Config =
 
     match maybeConfig with
         | Ok config -> config
-        | Error err -> raise (LoadException err)
+        | Error err -> raise (LoadException $"Could not parse secrets file: '{err}")
+
+
+let overrideConfigVarFromEnvVarIfExists(configVal, envVarName) =
+  let value = System.Environment.GetEnvironmentVariable(envVarName)
+  if value <> null then value else configVal
 
 /// Look up secrets for connection details. First look in the enivronment
 /// variables; then, if any cannot be found, from a config file in
 /// $HOME/.config/nowwhat/secrets.json
 let lazyConfig =
     lazy (
-        let config =
-            { forecastId = System.Environment.GetEnvironmentVariable("FORECAST_ID")
-              forecastToken = System.Environment.GetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN")
-              githubToken = System.Environment.GetEnvironmentVariable("NOWWHAT_GITHUB_TOKEN")
+        let config = loadConfig ()
+        // Override config variables from environment if corresponding
+        // environment variables are set
+        { config with 
+            forecastId = overrideConfigVarFromEnvVarIfExists(config.forecastId, "FORECAST_ID")
+            forecastToken = overrideConfigVarFromEnvVarIfExists(config.forecastToken, "NOWWHAT_FORECAST_TOKEN")
+            githubToken = overrideConfigVarFromEnvVarIfExists(config.githubToken, "NOWWHAT_GITHUB_TOKEN")
           }
-
-        // printfn $"config.forecastId: '{config.forecastId}'"
-        // printfn $"config.forecastToken: '{config.forecastToken}'"
-        // printfn $"config.githubToken: '{config.githubToken}'"
-        if (config.forecastId = null || config.forecastToken = null || config.githubToken = null) then
-           loadConfig ()
-        else
-           config
     )
+
 
 /// Return server credentials from either environment variables (if defined) or
 /// a config file. The file will only be read once.
