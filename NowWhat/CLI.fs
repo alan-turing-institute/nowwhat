@@ -1,7 +1,6 @@
 module NowWhat.CLI
 
 open NowWhat.API
-open NowWhat.Config
 
 let nowwhat argv =
   try
@@ -12,6 +11,9 @@ let nowwhat argv =
 
     let forecastProjects = Forecast.getProjects ()
     printfn $"Number of projects in Forecast: {forecastProjects |> Seq.length}"
+
+    // for p in forecastProjects do
+    //     printfn $"{p}"
 
     0
 

@@ -15,13 +15,14 @@ exception UnauthorisedException of string
 
 *)
 type Project = {
-  id:        int
-  harvestId: int option
-  clientId:  int option
-  name:      string
-  code:      string option
-  tags:      string list
-  notes:     string option
+  id:         int
+  harvestId:  int option
+  clientId:   int option
+  name:       string
+  code:       string option
+  tags:       string list
+  notes:      string option
+  isArchived: bool
 }
 
 // Can we elide this?
@@ -36,13 +37,14 @@ type Root = {
 let projectDecoder : Decoder<Project> =
     Decode.object (
         fun get -> {
-            Project.id        = get.Required.Field "id" Decode.int;
-            Project.harvestId = get.Optional.Field "harvest_id" Decode.int;
-            Project.clientId  = get.Optional.Field "client_id" Decode.int;
-            Project.name      = get.Required.Field "name" Decode.string;
-            Project.code      = get.Optional.Field "code" Decode.string;
-            Project.tags      = get.Required.Field "tags" (Decode.list Decode.string);
-            Project.notes     = get.Optional.Field "notes" Decode.string;
+            Project.id         = get.Required.Field "id" Decode.int;
+            Project.harvestId  = get.Optional.Field "harvest_id" Decode.int;
+            Project.clientId   = get.Optional.Field "client_id" Decode.int;
+            Project.name       = get.Required.Field "name" Decode.string;
+            Project.code       = get.Optional.Field "code" Decode.string;
+            Project.tags       = get.Required.Field "tags" (Decode.list Decode.string);
+            Project.notes      = get.Optional.Field "notes" Decode.string;
+            Project.isArchived = get.Required.Field "archived" Decode.bool;
         }
     )
 

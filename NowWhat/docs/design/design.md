@@ -13,25 +13,23 @@ but typically are not.
    the form `hut23-nnn`.
    - Except there is a single, hard-coded project about time off or something.
 
-2. These are unique across all Forecast projects
-
-3. Each Forecast Project should exist on GitHub as an issue;
+2. Each Forecast Project should exist on GitHub as an issue;
    - and all these issues should be in the “Project Tracker”
    
-4. Each GitHub issue in 
+3. Each GitHub issue in 
    - Active;
    - Awaiting start; or
    - Finding people
    must be a Project on Forecast.
    
-5. Allocations of Forecast should have a Finance code (or the Project has a
+4. Allocations of Forecast should have a Finance code (or the Project has a
    single Finance code).
 
-6. Projects that are Active or Awaiting start should have allocations (past and
+5. Projects that are Active or Awaiting start should have allocations (past and
    future) whose total resource is close to, but does not exceed, the resource
    requirements.
    
-7. The total allocation to a Finance code, in a Forecast project, past and
+6. The total allocation to a Finance code, in a Forecast project, past and
    future, is “about equal” to the total resource required and is anywy not
    greater than it. “About equal” means “within 1 FTE-week.”.
    
