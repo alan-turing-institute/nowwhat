@@ -141,7 +141,10 @@ let getProjectIssues (projectName: string): Issue List =
     // parse the response using the type provider
     let issues = ProjectIssuesFromGraphQL.Parse result
     // run WIP implementation in parallel with old until migration-time
-    let issues2 = result |> Decode.fromString projectRootDecoder
+    let issues2: ProjectRoot =
+      match result |> Decode.fromString projectRootDecoder with
+      | Ok issues -> issues
+      | Error _ -> failwith "Failed to decode"
     let project = (issues.Data.Repository.Projects.Edges |> Array.exactlyOne).Node
     let issueData: (Issue * string) array =
       project.Columns.Edges
@@ -152,6 +155,9 @@ let getProjectIssues (projectName: string): Issue List =
         body = x.Node.Content.Body;
         state = x.Node.Content.State
       }, x.Cursor)) )
+    let issueData2: Issue_WIP List =
+      List.map (fun column -> column.cards) issues2.projects.Head.columns
+      |> List.concat
 
     // Cursor points to the last item returned, used for paging of the requests
     let nextCursor =
