@@ -17,14 +17,33 @@ Run `dotnet tool restore` and then `dotnet paket restore`.
 
 Run [`script/dev-setup.sh`](script/dev-setup.sh) from project root.
 
-### Environment variables
+### App configuration
 
-Run the tool with the following environment variables set. [How to store sensitive environment variables on MacOS](https://medium.com/@johnjjung/how-to-store-sensitive-environment-variables-on-macos-76bd5ba464f6) may be useful.
-
-- `NOWWHAT_GITHUB_TOKEN` - Github [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
+The app needs the following information to authenticate to the GitHub and Forecast APIs.
+- A Github [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
     - The scope you need is `repo` (`Full control of private repositories`)
-- `FORECAST_ID` - most easily found by logging into [Forecast](https://forecastapp.com/) via web interface and reading number that appears in URL just after server name
-- `NOWWHAT_FORECAST_TOKEN` - log into [Forecast](https://forecastapp.com/), go to My Profile and then Developers section; there will be an option to obtain a Personal Access Token
+- The Forecast ID for your organisation.
+  - Most easily found by logging into [Forecast](https://forecastapp.com/) via web interface and reading number that appears in URL just after server name
+- A Forecast personal access token.
+  - Log into [Forecast](https://forecastapp.com/), go to My Profile and then Developers section; there will be an option to obtain a Personal Access Token
+
+#### Set via config file
+- Create a file in `~/.config/nowwhat/secrets.json` and add each variable as a top-level JSON field. e.g.
+
+```json
+{
+  "gitHubToken": "<NOWWHAT_GITHUB_TOKEN>",
+  "forecastId": "<FORECAST_ID>",
+  "forecastToken": "<NOWWHAT_FORECAST_TOKEN>"
+}
+```
+
+#### Set via environment variables
+[How to store sensitive environment variables on MacOS](https://medium.com/@johnjjung/how-to-store-sensitive-environment-variables-on-macos-76bd5ba464f6) may be useful.
+
+- `NOWWHAT_GITHUB_TOKEN` - GitHub personal access token
+- `FORECAST_ID` - Forecast organisation ID
+- `NOWWHAT_FORECAST_TOKEN` - Forecast personal access token
 
 ### Building and running
 
