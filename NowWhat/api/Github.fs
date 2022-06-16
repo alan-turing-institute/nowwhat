@@ -12,25 +12,26 @@ open NowWhat.Config
 
 *)
 
-type Column = {
-  name : string
-}
-
-type Project = {
-  number: int;
-  name: string;
-  columns: Column List;
-}
-
-type ProjectRoot = {
-  projects: Project List
-}
-
 /// There are currently **two** Issue types -- a placeholder (Issue) allowing work to continue on
 /// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
 /// which will eventually replace Issue.
 type Issue_WIP = {
   number: int;
+}
+
+type Column = {
+  name: string
+  cards: Issue_WIP List
+}
+
+type Project = {
+  number: int
+  name: string
+  columns: Column List
+}
+
+type ProjectRoot = {
+  projects: Project List
 }
 
 type Issue = {
@@ -45,10 +46,18 @@ type Issue = {
    Get Forecast objects as F# types
    *)
 
+let issueDecoder : Decoder<Issue_WIP> =
+    Decode.object (
+        fun get -> {
+            Issue_WIP.number = get.Required.At ["node"; "content"; "number"] Decode.int
+        }
+    )
+
 let columnDecoder : Decoder<Column> =
     Decode.object (
         fun get -> {
           Column.name = get.Required.At ["node"; "name"] Decode.string
+          Column.cards = get.Required.At ["node"; "cards"; "edges"] (Decode.list issueDecoder)
         }
     )
 
@@ -57,7 +66,7 @@ let projectDecoder : Decoder<Project> =
         fun get -> {
           Project.number = get.Required.At ["node"; "number"] Decode.int
           Project.name = get.Required.At ["node"; "name"] Decode.string
-          Project.columns = get.Required.At ["node";"columns"; "edges"] (Decode.list columnDecoder)
+          Project.columns = get.Required.At ["node"; "columns"; "edges"] (Decode.list columnDecoder)
         }
     )
 
@@ -65,14 +74,6 @@ let projectRootDecoder : Decoder<ProjectRoot> =
     Decode.object (
         fun get -> {
           ProjectRoot.projects = get.Required.At ["data"; "repository"; "projects"; "edges"] (Decode.list projectDecoder)
-        }
-    )
-
-let issueDecoder : Decoder<Issue_WIP> =
-    Decode.object (
-        fun get -> {
-            Issue_WIP.number = get.Required.Field "number" Decode.int
-            // Issue.url= get.Required.Field "url" Decode.string;
         }
     )
 

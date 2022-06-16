@@ -51,7 +51,14 @@ let ``test Forecast JSON deserialisation`` (jsonFileName: string): unit =
 [<Theory>]
 [<InlineData("GithubProjectsSerialised.json")>]
 let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string): unit =
-    let expected = { Github.ProjectRoot.projects = [{number = 2; name="Project Tracker"; columns=[{name="Suggested"}]}]}
+    let expected = { Github.ProjectRoot.projects = [{
+        number = 2
+        name = "Project Tracker"
+        columns = [{
+          name = "Suggested"
+          cards = [{ number = 1 }]
+        }]
+    }]}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
     // printfn $"Expected Issue: \n{expected}"
     let actual = match rootJson |> Decode.fromString Github.projectRootDecoder with
