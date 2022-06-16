@@ -1,17 +1,20 @@
 module NowWhat.CLI
 
 open NowWhat.API
-open NowWhat.Config
+
+// This doesn't really do what it claims to, feel free to improve
+let roundToNearest (n: int) (roundTo: int): int =
+  n / roundTo * roundTo
 
 let nowwhat argv =
   try
     printfn "Now what?"
 
     let gitHubIssues = Github.getProjectIssues "Project Tracker"
-    printfn $"Number of issues in GitHub: {gitHubIssues |> Seq.length}"
+    printfn $"Number of issues in GitHub: over {roundToNearest (gitHubIssues |> Seq.length) 100}"
 
     let forecastProjects = Forecast.getProjects ()
-    printfn $"Number of projects in Forecast: {forecastProjects |> Seq.length}"
+    printfn $"Number of projects in Forecast: over {roundToNearest (forecastProjects |> Seq.length) 100}"
 
     0
 
