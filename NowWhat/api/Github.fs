@@ -15,13 +15,16 @@ open NowWhat.Config
 /// There are currently **two** Issue types -- a placeholder (Issue) allowing work to continue on
 /// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
 /// which will eventually replace Issue.
-type Issue_WIP = {
-  number: int;
+type Issue = {
+  number: int
+  title: string
+  body: string
+  state: string
 }
 
 type Column = {
   name: string
-  cards: Issue_WIP List
+  cards: (Issue * string) List // string is cursor, would be nice to have a type alias for cursor
 }
 
 type Project = {
@@ -34,23 +37,19 @@ type ProjectRoot = {
   projects: Project List
 }
 
-type Issue = {
-  id: string
-  number: int
-  title: string
-  body: string
-  state: string
-}
-
 (* ---------------------------------------------------------------------------------------------------
    Get Forecast objects as F# types
    *)
 
-let issueDecoder : Decoder<Issue_WIP> =
+let issueDecoder : Decoder<Issue * string> =
     Decode.object (
-        fun get -> {
-            Issue_WIP.number = get.Required.At ["node"; "content"; "number"] Decode.int
-        }
+        fun get -> ({
+            Issue.number = get.Required.At ["node"; "content"; "number"] Decode.int
+            Issue.title = get.Required.At ["node"; "content"; "title"] Decode.string
+            Issue.body = get.Required.At ["node"; "content"; "body"] Decode.string
+            Issue.state = get.Required.At ["node"; "content"; "state"] Decode.string
+        }, get.Required.Field "cursor" Decode.string
+      )
     )
 
 let columnDecoder : Decoder<Column> =
@@ -120,7 +119,7 @@ let getProjectIssues (projectName: string): Issue List =
                     | Ok secrets -> secrets.githubToken
                     | Error err -> raise err
 
-  let rec getProjectIssues_page (projectName: string) cursor acc =
+  let rec getProjectIssues_page (projectName: string) cursor (acc: (Issue * string) List) =
     let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
@@ -146,16 +145,7 @@ let getProjectIssues (projectName: string): Issue List =
       | Ok issues -> issues
       | Error _ -> failwith "Failed to decode"
     let project = (issues.Data.Repository.Projects.Edges |> Array.exactlyOne).Node
-    let issueData: (Issue * string) array =
-      project.Columns.Edges
-      |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
-        id = x.Node.Id;
-        number = x.Node.Content.Number;
-        title = x.Node.Content.Title;
-        body = x.Node.Content.Body;
-        state = x.Node.Content.State
-      }, x.Cursor)) )
-    let issueData2: Issue_WIP List =
+    let issueData: (Issue * string) List =
       List.map (fun column -> column.cards) issues2.projects.Head.columns
       |> List.concat
 
@@ -165,11 +155,11 @@ let getProjectIssues (projectName: string): Issue List =
           None
         else
           issueData
-          |> Array.last
+          |> List.last
           |> fun (_, c) -> Some c
 
     match nextCursor with
-    | Some _ -> getProjectIssues_page project.Name nextCursor (Array.append acc issueData)
-    | None -> Array.append acc issueData
+    | Some _ -> getProjectIssues_page project.Name nextCursor (List.append acc issueData)
+    | None -> List.append acc issueData
 
-  getProjectIssues_page projectName None [||] |> Array.map fst |> Array.toList
+  getProjectIssues_page projectName None [] |> List.map fst
