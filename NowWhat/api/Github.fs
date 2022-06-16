@@ -199,3 +199,9 @@ let getIssueDetails (gitHubToken: string) issueNumber =
     // parse the response using the type provider
     let issues = IssueDetailsFromGraphQL.Parse result
     issues.Data.Repository.Issue
+
+let getProjectIssuesMock (projectName: string): Issue List =
+  [
+      { id = "TestId"; number = 50; title = "Coram / Nuffield"; body = "Childrens' charity Coram are proposing to investigate the use of data to improve children's placement outcomes."; state = "Open" };
+      { id = "TestId"; number = 562; title = "Research Compute Platforms Service Area"; body = "Topdesk tickets about research computing."; state = "Open" }
+  ]

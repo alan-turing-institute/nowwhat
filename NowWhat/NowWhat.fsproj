@@ -9,6 +9,7 @@
     <Compile Include="Config.fs" />
     <Compile Include="api/Github.fs" />
     <Compile Include="api/Forecast.fs" />
+    <Compile Include="domain/Project.fs" />
     <Compile Include="CLI.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -1,4 +1,135 @@
 Now what?
+Number of issues in GitHub: 2
 WARNING: You are using single-threaded workstation garbage collection, which means that parallel programs cannot scale.  Please configure your program to use server garbage collection.
-Number of issues in GitHub: 1
 Number of projects in Forecast: 262
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2386
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at System.Number.ThrowOverflowOrFormatException(ParsingStatus status, TypeCode type)
+   at System.Int32.Parse(String s, NumberStyles style, IFormatProvider provider)
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2391
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+Error: System.FormatException: Input string was not in a correct format.
+   at System.Number.ThrowOverflowOrFormatException(ParsingStatus status, TypeCode type)
+   at System.Int32.Parse(String s, NumberStyles style, IFormatProvider provider)
+   at Microsoft.FSharp.Core.LanguagePrimitives.ParseInt32(String s) in D:\a\_work\1\s\src\fsharp\FSharp.Core\prim-types.fs:line 2391
+   at NowWhat.Domain.Project.maybeProjectCode(FSharpOption`1 code) in /Users/jrobinson/projects/nowwhat/NowWhat/domain/Project.fs:line 27
+map
+  [(25, { id = 1723255
+          harvestId = Some 18644962
+          clientId = Some 761647
+          name = "Reproducible Research"
+          code = Some "hut23-25"
+          tags = ["GitHub: 25"]
+          notes = Some "Seed project" });
+   (27, { id = 1824201
+          harvestId = Some 18945931
+          clientId = Some 761647
+          name = "Network Comparison"
+          code = Some "hut23-27"
+          tags = ["GitHub: 27"; "R-SIS-003"]
+          notes = Some "Seed project" }); (28, { id = 2063544
+                                                 harvestId = Some 21127553
+                                                 clientId = Some 780936
+                                                 name = "PDMP"
+                                                 code = Some "hut23-28"
+                                                 tags = ["GitHub: 28"]
+                                                 notes = None });
+   (31, { id = 1824194
+          harvestId = Some 18725372
+          clientId = Some 761645
+          name = "Maru"
+          code = Some "hut23-31"
+          tags = ["GitHub: 31"; "R-DST-MAR"]
+          notes = None });
+   (32, { id = 1723251
+          harvestId = Some 18644291
+          clientId = Some 761645
+          name = "AIDA"
+          code = Some "hut23-32"
+          tags = ["GitHub: 32"; "GitHub: 33"; "R-DST-AID"]
+          notes = Some "" }); (34, { id = 2061021
+                                     harvestId = Some 21178949
+                                     clientId = Some 780936
+                                     name = "CHANCE"
+                                     code = Some "hut23-34"
+                                     tags = ["GitHub: 34"; "R-LRF-WG1"]
+                                     notes = Some "" });
+   (46, { id = 1824200
+          harvestId = Some 18945918
+          clientId = Some 780936
+          name = "BLUE"
+          code = Some "hut23-46"
+          tags = ["GitHub: 46"; "REG_Owner: Martin"; "R-LRF-001"]
+          notes = None }); (50, { id = 1824204
+                                  harvestId = Some 18946172
+                                  clientId = Some 866233
+                                  name = "Coram"
+                                  code = Some "hut23-50"
+                                  tags = ["GitHub: 50"]
+                                  notes = None });
+   (58, { id = 2060747
+          harvestId = Some 21108391
+          clientId = Some 761648
+          name = "Stephen Hansen"
+          code = Some "hut23-58"
+          tags = ["GitHub: 58"]
+          notes = None }); ...]
+map
+  [(50,
+    { id = "TestId"
+      number = 50
+      title = "Coram / Nuffield"
+      body =
+       "Childrens' charity Coram are proposing to investigate the use of data to improve children's placement outcomes."
+      state = "Open" });
+   (562, { id = "TestId"
+           number = 562
+           title = "Research Compute Platforms Service Area"
+           body = "Topdesk tickets about research computing."
+           state = "Open" })]
+[50; 562]
+Number of constructed projects: 0

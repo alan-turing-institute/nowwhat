@@ -1,18 +1,20 @@
 module NowWhat.CLI
 
 open NowWhat.API
-open NowWhat.Config
+open NowWhat.Domain
 
 let nowwhat argv =
   try
     printfn "Now what?"
 
-    let gitHubIssues = Github.getProjectIssues "Project Tracker"
+    let gitHubIssues = Github.getProjectIssuesMock "Project Tracker"
     printfn $"Number of issues in GitHub: {gitHubIssues |> Seq.length}"
 
     let forecastProjects = Forecast.getProjects ()
     printfn $"Number of projects in Forecast: {forecastProjects |> Seq.length}"
 
+    let projects = Project.constructProjects forecastProjects gitHubIssues
+    printfn $"Number of constructed projects: {projects |> Seq.length}"
     0
 
   with
