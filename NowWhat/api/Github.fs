@@ -18,6 +18,8 @@ open NowWhat.Config
 type Issue_WIP = {
   number: int
   title: string
+  body: string
+  state: string
 }
 
 type Column = {
@@ -51,6 +53,8 @@ let issueDecoder : Decoder<Issue_WIP> =
         fun get -> {
             Issue_WIP.number = get.Required.At ["node"; "content"; "number"] Decode.int
             Issue_WIP.title = get.Required.At ["node"; "content"; "title"] Decode.string
+            Issue_WIP.body = get.Required.At ["node"; "content"; "body"] Decode.string
+            Issue_WIP.state = get.Required.At ["node"; "content"; "state"] Decode.string
         }
     )
 

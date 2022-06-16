@@ -59,6 +59,8 @@ let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string):
           cards = [{
             number = 1
             title = "Some project name here"
+            body = "Some project description here"
+            state = "OPEN"
           }]
         }]
     }]}
