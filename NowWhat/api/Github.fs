@@ -16,7 +16,8 @@ open NowWhat.Config
 /// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
 /// which will eventually replace Issue.
 type Issue_WIP = {
-  number: int;
+  number: int
+  title: string
 }
 
 type Column = {
@@ -35,7 +36,6 @@ type ProjectRoot = {
 }
 
 type Issue = {
-  id: string
   number: int
   title: string
   body: string
@@ -50,6 +50,7 @@ let issueDecoder : Decoder<Issue_WIP> =
     Decode.object (
         fun get -> {
             Issue_WIP.number = get.Required.At ["node"; "content"; "number"] Decode.int
+            Issue_WIP.title = get.Required.At ["node"; "content"; "title"] Decode.string
         }
     )
 
@@ -149,7 +150,6 @@ let getProjectIssues (projectName: string): Issue List =
     let issueData: (Issue * string) array =
       project.Columns.Edges
       |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
-        id = x.Node.Id;
         number = x.Node.Content.Number;
         title = x.Node.Content.Title;
         body = x.Node.Content.Body;

@@ -56,7 +56,10 @@ let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string):
         name = "Project Tracker"
         columns = [{
           name = "Suggested"
-          cards = [{ number = 1 }]
+          cards = [{
+            number = 1
+            title = "Some project name here"
+          }]
         }]
     }]}
     let rootJson = String.Join("", File.ReadAllLines($"{__SOURCE_DIRECTORY__}/fixtures/{jsonFileName}"))
