@@ -62,7 +62,7 @@ let rootDecoder : Decoder<Root> =
 let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 
 let forecastRequest (endpoint: string): string =
-  let secrets = match getSecrets () with
+  let secrets = match getConfig () with
                 | Ok secrets -> secrets
                 | Error err -> raise (FailedException("Forecast secrets could not be loaded. {err.ToString()}"))
   let response = Request.createUrl Get (ForecastUrl + endpoint)

@@ -12,60 +12,52 @@ module NowWhat.Config
 open Thoth.Json.Net
 open System.IO
 
-exception SecretLoadException of string
+exception LoadException of string
 
-type Secrets =
+type Config =
     { githubToken   : string
       forecastId    : string
       forecastToken : string
   }
 
-type Config =
-    { NOWWHAT_GITHUB_TOKEN   : string
-      FORECAST_ID            : string
-      NOWWHAT_FORECAST_TOKEN : string
-  }
-
-let getSecretsFromConfig () : Secrets =
+let loadConfig () : Config =
     let homeDir = System.Environment.GetFolderPath System.Environment.SpecialFolder.UserProfile
     let pathToConfig = homeDir + "/" + ".config/nowwhat/secrets.json"
     if not (File.Exists pathToConfig) then
-      raise (SecretLoadException "Secrets file not found")
+      raise (LoadException "Secrets file not found")
     else
 
-    let maybeSecrets = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
+    let maybeConfig = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
 
-    match maybeSecrets with
-        | Ok config -> { githubToken   = config.NOWWHAT_GITHUB_TOKEN
-                         forecastId    = config.FORECAST_ID
-                         forecastToken = config.NOWWHAT_FORECAST_TOKEN }
-        | Error err -> raise (SecretLoadException err)
+    match maybeConfig with
+        | Ok config -> config
+        | Error err -> raise (LoadException err)
 
 /// Look up secrets for connection details. First look in the enivronment
 /// variables; then, if any cannot be found, from a config file in
 /// $HOME/.config/nowwhat/secrets.json
-let lazySecrets =
+let lazyConfig =
     lazy (
-        let secrets =
+        let config =
             { forecastId = System.Environment.GetEnvironmentVariable("FORECAST_ID")
               forecastToken = System.Environment.GetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN")
               githubToken = System.Environment.GetEnvironmentVariable("NOWWHAT_GITHUB_TOKEN")
           }
 
-        // printfn $"secrets.forecastId: '{secrets.forecastId}'"
-        // printfn $"secrets.forecastToken: '{secrets.forecastToken}'"
-        // printfn $"secrets.githubToken: '{secrets.githubToken}'"
-        if (secrets.forecastId = null || secrets.forecastToken = null || secrets.githubToken = null) then
-           getSecretsFromConfig ()
+        // printfn $"config.forecastId: '{config.forecastId}'"
+        // printfn $"config.forecastToken: '{config.forecastToken}'"
+        // printfn $"config.githubToken: '{config.githubToken}'"
+        if (config.forecastId = null || config.forecastToken = null || config.githubToken = null) then
+           loadConfig ()
         else
-           secrets
+           config
     )
 
 /// Return server credentials from either environment variables (if defined) or
 /// a config file. The file will only be read once.
-let getSecrets (): Result<Secrets, exn> =
+let getConfig (): Result<Config, exn> =
     try
-      let secrets = lazySecrets.Force()
-      Ok secrets
+      let config = lazyConfig.Force()
+      Ok config
     with
     | e -> Error e
