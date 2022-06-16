@@ -32,7 +32,7 @@ The app needs the following information to authenticate to the GitHub and Foreca
 
 ```json
 {
-  "gitHubToken": "<NOWWHAT_GITHUB_TOKEN>",
+  "githubToken": "<NOWWHAT_GITHUB_TOKEN>",
   "forecastId": "<FORECAST_ID>",
   "forecastToken": "<NOWWHAT_FORECAST_TOKEN>"
 }
