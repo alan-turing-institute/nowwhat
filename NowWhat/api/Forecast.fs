@@ -64,7 +64,7 @@ let [<Literal>] ForecastUrl = "https://api.forecastapp.com/"
 let forecastRequest (endpoint: string): string =
   let secrets = match getConfig () with
                 | Ok secrets -> secrets
-                | Error err -> raise (FailedException("Forecast secrets could not be loaded. {err.ToString()}"))
+                | Error err -> raise (FailedException($"Forecast secrets could not be loaded. {err.ToString()}"))
   let response = Request.createUrl Get (ForecastUrl + endpoint)
               |> Request.setHeader (Authorization ("Bearer " + secrets.forecastToken))
               |> Request.setHeader (Custom ("Forecast-Account-ID", secrets.forecastId))
