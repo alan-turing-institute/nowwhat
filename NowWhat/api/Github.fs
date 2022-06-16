@@ -119,7 +119,7 @@ let getProjectIssues (projectName: string): Issue List =
                     | Ok secrets -> secrets.githubToken
                     | Error err -> raise err
 
-  let rec getProjectIssues_page (projectName: string) cursor (acc: (Issue * string) array) =
+  let rec getProjectIssues_page (projectName: string) cursor (acc: (Issue * string) List) =
     let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
@@ -145,7 +145,7 @@ let getProjectIssues (projectName: string): Issue List =
       | Ok issues -> issues
       | Error _ -> failwith "Failed to decode"
     let project = (issues.Data.Repository.Projects.Edges |> Array.exactlyOne).Node
-    let issueData: (Issue * string) array =
+    let issueData: (Issue * string) List =
       project.Columns.Edges
       |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
         number = x.Node.Content.Number;
@@ -153,6 +153,7 @@ let getProjectIssues (projectName: string): Issue List =
         body = x.Node.Content.Body;
         state = x.Node.Content.State
       }, x.Cursor)) )
+      |> Array.toList
     let issueData2: (Issue * string) List =
       List.map (fun column -> column.cards) issues2.projects.Head.columns
       |> List.concat
@@ -163,11 +164,11 @@ let getProjectIssues (projectName: string): Issue List =
           None
         else
           issueData
-          |> Array.last
+          |> List.last
           |> fun (_, c) -> Some c
 
     match nextCursor with
-    | Some _ -> getProjectIssues_page project.Name nextCursor (Array.append acc issueData)
-    | None -> Array.append acc issueData
+    | Some _ -> getProjectIssues_page project.Name nextCursor (List.append acc issueData)
+    | None -> List.append acc issueData
 
-  getProjectIssues_page projectName None [||] |> Array.map fst |> Array.toList
+  getProjectIssues_page projectName None [] |> List.map fst
