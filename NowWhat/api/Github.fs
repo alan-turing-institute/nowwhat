@@ -2,7 +2,6 @@ module NowWhat.API.Github
 
 open HttpFs.Client
 open Hopac
-open FSharp.Data
 open Thoth.Json.Net
 
 open NowWhat.Config
@@ -13,113 +12,79 @@ open NowWhat.Config
 
 *)
 
-type Column = {
-  name : string
-}
+type Issue =
+    { number: int
+      title: string
+      body: string
+      state: string }
 
-type Project = {
-  number: int;
-  name: string;
-  columns: Column List;
-}
+type Column =
+    { name: string
+      cards: (Issue * string) List } // string is cursor, would be nice to have a type alias for cursor
 
-type ProjectRoot = {
-  projects: Project List
-}
+type Project =
+    { number: int
+      name: string
+      columns: Column List }
 
-/// There are currently **two** Issue types -- a placeholder (Issue) allowing work to continue on
-/// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
-/// which will eventually replace Issue.
-type Issue_WIP = {
-  number: int;
-}
-
-type Issue = {
-  id: string
-  number: int
-  title: string
-  body: string
-  state: string
-}
-
-// Can we elide this?
-type IssueRoot = {
-  issue: Issue_WIP;
-}
+type ProjectRoot = { projects: Project List }
 
 (* -----------------------------------------------------------------------------
-         
    Get Forecast objects as F# types
    *)
 
-let columnDecoder : Decoder<Column> =
-    Decode.object (
-        fun get -> {
-          Column.name = get.Required.At ["node"; "name"] Decode.string
-        }
-    )
+let issueDecoder: Decoder<Issue * string> =
+    Decode.object (fun get ->
+        ({ Issue.number = get.Required.At [ "node"; "content"; "number" ] Decode.int
+           Issue.title = get.Required.At [ "node"; "content"; "title" ] Decode.string
+           Issue.body = get.Required.At [ "node"; "content"; "body" ] Decode.string
+           Issue.state = get.Required.At [ "node"; "content"; "state" ] Decode.string },
+         get.Required.Field "cursor" Decode.string))
 
-let projectDecoder : Decoder<Project> =
-    Decode.object (
-        fun get -> {
-          Project.number = get.Required.At ["node"; "number"] Decode.int
-          Project.name = get.Required.At ["node"; "name"] Decode.string
-          Project.columns = get.Required.At ["node";"columns"; "edges"] (Decode.list columnDecoder)
-        }
-    )
+let columnDecoder: Decoder<Column> =
+    Decode.object (fun get ->
+        { Column.name = get.Required.At [ "node"; "name" ] Decode.string
+          Column.cards = get.Required.At [ "node"; "cards"; "edges" ] (Decode.list issueDecoder) })
 
-let projectRootDecoder : Decoder<ProjectRoot> =
-    Decode.object (
-        fun get -> {
-          ProjectRoot.projects = get.Required.At ["data"; "repository"; "projects"; "edges"] (Decode.list projectDecoder)
-        }
-    )
+let projectDecoder: Decoder<Project> =
+    Decode.object (fun get ->
+        { Project.number = get.Required.At [ "node"; "number" ] Decode.int
+          Project.name = get.Required.At [ "node"; "name" ] Decode.string
+          Project.columns = get.Required.At [ "node"; "columns"; "edges" ] (Decode.list columnDecoder) })
 
-let issueDecoder : Decoder<Issue_WIP> =
-    Decode.object (
-        fun get -> {
-            Issue_WIP.number = get.Required.Field "number" Decode.int
-            // Issue.url= get.Required.Field "url" Decode.string;
-        }
-    )
-
-let issueRootDecoder : Decoder<IssueRoot> =
-  Decode.object (
-    fun get -> {
-      IssueRoot.issue = get.Required.At ["data"; "repository"; "issue"] issueDecoder
-    }
-  )
+let projectRootDecoder: Decoder<ProjectRoot> =
+    Decode.object (fun get ->
+        { ProjectRoot.projects =
+            get.Required.At
+                [ "data"
+                  "repository"
+                  "projects"
+                  "edges" ]
+                (Decode.list projectDecoder) })
 
 (* -----------------------------------------------------------------------------
-
    Interface to the GitHub API
 
 *)
 
-type ProjectIssuesFromGraphQL = JsonProvider<"api/sample-json/gh-project-issues.json">
-type IssueDetailsFromGraphQL = JsonProvider<"api/sample-json/gh-issue-details.json">
+[<Literal>]
+let GithubGraphQLEndpoint = "https://api.github.com/graphql"
 
-let [<Literal>] GithubGraphQLEndpoint = "https://api.github.com/graphql"
-
-let [<Literal>] ProjectBoard = "Project Tracker"
-let [<Literal>] StandingRoles = "Standing Roles"
-let allProjectBoards = [
-  ProjectBoard
-  StandingRoles
-]
+[<Literal>]
+let ProjectBoard = "Project Tracker"
 
 // TODO: async?
 /// Query Github GraphQL endpoint
 /// body is json with GraphQL query element
 /// https://docs.github.com/en/graphql/guides/forming-calls-with-graphql#communicating-with-graphql
 let runGithubQuery (gitHubToken: string) body =
-  GithubGraphQLEndpoint
-  |> Request.createUrl Post
-  |> Request.setHeader (Authorization $"bearer {gitHubToken}")
-  |> Request.setHeader (UserAgent "NowWhat")
-  |> Request.body (BodyString body)
-  |> Request.responseAsString // UTF8-encoded
-  |> run
+    GithubGraphQLEndpoint
+    |> Request.createUrl Post
+    |> Request.setHeader (Authorization $"bearer {gitHubToken}")
+    |> Request.setHeader (UserAgent "NowWhat")
+    |> Request.body (BodyString body)
+    |> Request.responseAsString // UTF8-encoded
+    |> run
 
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
@@ -128,76 +93,52 @@ let formatQuery (q: string) = q.Replace("\n", "")
    Public interface to this module
 *)
 
-let getProjectIssues (projectName: string): Issue List =
-  // Wrap recursive call which handles paging of the responses
-  let githubToken = match getSecrets () with
-                    | Ok secrets -> secrets.githubToken
-                    | Error err -> raise err
+let getProjectIssues (projectName: string) : Issue List =
+    // the parent function is only wrapping up the recursive call that deals with paging of the responses
+    let githubToken =
+        match getConfig () with
+        | Ok secrets -> secrets.githubToken
+        | Error err -> raise err
 
-  let rec getProjectIssues_page projectName cursor acc =
-    let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
+    let rec getProjectIssues_page (projectName: string) cursor (acc: (Issue * string) List) =
+        let queryTemplate =
+            System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
-    // fill in placeholders into the query - project board name and cursor for paging
-    let query =
-      let cursorQuery =
-        match cursor with
-        | None ->
-          // Get first batch
-          queryTemplate.Replace("CURSOR", "null")
-        | Some crs ->
-          // Get subsequent batches
-          queryTemplate.Replace("CURSOR", $"\\\"{crs}\\\"")
-      cursorQuery.Replace("PROJECTNAME", $"\\\"{projectName}\\\"")
-      |> formatQuery
+        // fill in placeholders into the query - project board name and cursor for paging
+        let query =
+            let cursorQuery =
+                match cursor with
+                | None ->
+                    // Get first batch
+                    queryTemplate.Replace("CURSOR", "null")
+                | Some crs ->
+                    // Get subsequent batches
+                    queryTemplate.Replace("CURSOR", $"\\\"{crs}\\\"")
 
-    let result = runGithubQuery githubToken query
+            cursorQuery.Replace("PROJECTNAME", $"\\\"{projectName}\\\"")
+            |> formatQuery
 
-    // parse the response using the type provider
-    let issues = ProjectIssuesFromGraphQL.Parse result
-    // run WIP implementation in parallel with old until migration-time
-    let issues2 = result |> Decode.fromString projectRootDecoder
-    let issueData =
-      issues.Data.Repository.Projects.Edges
-      |> Array.exactlyOne
-      |> fun project ->
-        let projectName = project.Node.Name, project.Node.Number
-        let cards: (Issue * string) array =
-          project.Node.Columns.Edges
-          |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
-            id = x.Node.Id;
-            number = x.Node.Content.Number;
-            title = x.Node.Content.Title;
-            body = x.Node.Content.Body;
-            state = x.Node.Content.State
-          }, x.Cursor)) )
-        cards
+        let result = runGithubQuery githubToken query
 
-    // Cursor points to the last item returned, used for paging of the requests
-    let nextCursor =
-        if issueData.Length = 0 then
-          None
-        else
-          issueData
-          |> Array.last
-          |> fun (_, c) -> Some c
+        let issues: ProjectRoot =
+            match result |> Decode.fromString projectRootDecoder with
+            | Ok issues -> issues
+            | Error _ -> failwith "Failed to decode"
 
-    match nextCursor with
-    | Some _ -> getProjectIssues_page projectName nextCursor (Array.append acc issueData)
-    | None -> Array.append acc issueData
+        let issueData: (Issue * string) List =
+            List.map (fun column -> column.cards) issues.projects.Head.columns
+            |> List.concat
 
-  getProjectIssues_page projectName None [||] |> Array.map fst |> Array.toList
+        // Cursor points to the last item returned, used for paging of the requests
+        let nextCursor =
+            if issueData.Length = 0 then
+                None
+            else
+                issueData |> List.last |> (fun (_, c) -> Some c)
 
-// Currently unused
-let getIssueDetails (gitHubToken: string) issueNumber =
-    let queryTemplate = System.IO.File.ReadAllText "api/queries/issue-details-graphql.json"
+        match nextCursor with
+        | Some _ -> getProjectIssues_page projectName nextCursor (List.append acc issueData)
+        | None -> List.append acc issueData
 
-    // fill in placeholders into the query - issue number
-    let query =
-      queryTemplate.Replace("ISSUENUMBER", $"{issueNumber}")
-      |> formatQuery
-
-    let result = runGithubQuery gitHubToken query
-
-    // parse the response using the type provider
-    let issues = IssueDetailsFromGraphQL.Parse result
-    issues.Data.Repository.Issue
+    getProjectIssues_page projectName None []
+    |> List.map fst
