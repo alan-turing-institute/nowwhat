@@ -31,7 +31,7 @@ let loadConfig () : Config =
 
     match maybeConfig with
         | Ok config -> config
-        | Error err -> raise (LoadException err)
+        | Error err -> raise (LoadException $"Could not parse secrets file: '{err}")
 
 /// Look up secrets for connection details. First look in the enivronment
 /// variables; then, if any cannot be found, from a config file in
