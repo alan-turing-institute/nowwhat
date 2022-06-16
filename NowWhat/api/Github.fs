@@ -81,13 +81,6 @@ let issueDecoder : Decoder<Issue_WIP> =
         }
     )
 
-let issueRootDecoder : Decoder<IssueRoot> =
-  Decode.object (
-    fun get -> {
-      IssueRoot.issue = get.Required.At ["data"; "repository"; "issue"] issueDecoder
-    }
-  )
-
 (* ---------------------------------------------------------------------------------------------------
 
    Interface to the GitHub API
