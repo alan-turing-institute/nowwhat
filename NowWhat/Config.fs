@@ -26,10 +26,8 @@ let loadConfig () : Config =
     if not (File.Exists pathToConfig) then
       raise (LoadException $"Secrets file not found at '{pathToConfig}'")
     else
-
-    let maybeConfig = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
-
-    match maybeConfig with
+      let maybeConfig = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
+      match maybeConfig with
         | Ok config -> config
         | Error err -> raise (LoadException err)
 

@@ -16,6 +16,9 @@ let nowwhat argv =
     let forecastProjects = Forecast.getProjects ()
     printfn $"Number of projects in Forecast: over {roundToNearest (forecastProjects |> Seq.length) 100}"
 
+    // for p in forecastProjects do
+    //     printfn $"{p}"
+
     0
 
   with
