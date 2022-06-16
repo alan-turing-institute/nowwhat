@@ -41,11 +41,6 @@ type Issue = {
   state: string
 }
 
-// Can we elide this?
-type IssueRoot = {
-  issue: Issue_WIP;
-}
-
 (* ---------------------------------------------------------------------------------------------------
    Get Forecast objects as F# types
    *)
