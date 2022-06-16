@@ -22,7 +22,7 @@ let nowwhat argv =
     | Forecast.FailedException(string) ->
       printfn $"Error retrieving Forecast data: {string}"
       -2
-    | Config.SecretLoadException(string) ->
+    | Config.LoadException(string) ->
       printfn $"Error loading secrets: {string}"
       -3
     | other ->
