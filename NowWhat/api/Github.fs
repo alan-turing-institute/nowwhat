@@ -24,7 +24,7 @@ type Issue = {
 
 type Column = {
   name: string
-  cards: Issue List
+  cards: (Issue * string) List // string is cursor, would be nice to have a type alias for cursor
 }
 
 type Project = {
@@ -41,14 +41,15 @@ type ProjectRoot = {
    Get Forecast objects as F# types
    *)
 
-let issueDecoder : Decoder<Issue> =
+let issueDecoder : Decoder<Issue * string> =
     Decode.object (
-        fun get -> {
+        fun get -> ({
             Issue.number = get.Required.At ["node"; "content"; "number"] Decode.int
             Issue.title = get.Required.At ["node"; "content"; "title"] Decode.string
             Issue.body = get.Required.At ["node"; "content"; "body"] Decode.string
             Issue.state = get.Required.At ["node"; "content"; "state"] Decode.string
-        }
+        }, get.Required.Field "cursor" Decode.string
+      )
     )
 
 let columnDecoder : Decoder<Column> =
@@ -118,7 +119,7 @@ let getProjectIssues (projectName: string): Issue List =
                     | Ok secrets -> secrets.githubToken
                     | Error err -> raise err
 
-  let rec getProjectIssues_page (projectName: string) cursor acc =
+  let rec getProjectIssues_page (projectName: string) cursor (acc: (Issue * string) array) =
     let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
@@ -152,7 +153,7 @@ let getProjectIssues (projectName: string): Issue List =
         body = x.Node.Content.Body;
         state = x.Node.Content.State
       }, x.Cursor)) )
-    let issueData2: Issue List =
+    let issueData2: (Issue * string) List =
       List.map (fun column -> column.cards) issues2.projects.Head.columns
       |> List.concat
 
