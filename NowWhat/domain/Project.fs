@@ -15,7 +15,7 @@ type TimeConstraint = {
 }
 
 type Project = {
-  forecastId: int
+  forecastIds: int list
   githubIssue: int
   name: string
   constraints: TimeConstraint list
@@ -24,10 +24,17 @@ type Project = {
 let maybeProjectCode (code : string option) : int option =
   try
     match code with
-    | Some string -> Some (string.Replace("hut23-", "") |> int)
+    | Some s ->
+        try 
+           s.Replace("hut23-", "") |> int |> Some
+        with _ ->
+           None
     | None -> None
   with
-    | error -> printfn $"Error: {error}"; None
+    | error ->
+        printfn "The string cannot be parsed: %A" code
+        printfn $"Error: {error}"
+        None
 
 
 let constructProjects (forecastProjects : Forecast.Project List) (githubIssues : Github.Issue List) : (Project list) = //*(Forecast.Project list)*(Github.Issue list)=
@@ -36,6 +43,8 @@ let constructProjects (forecastProjects : Forecast.Project List) (githubIssues :
       forecastProjects
       |> List.choose (fun project ->
            Option.map (fun code -> (code, project)) (maybeProjectCode project.code))
+      |> List.groupBy fst
+      |> List.map (fun (code, values) -> code, values |> List.map snd)
       |> Map
 
   let githubMap =
@@ -45,12 +54,13 @@ let constructProjects (forecastProjects : Forecast.Project List) (githubIssues :
 
   let projects =
       forecastMap.Keys
-      |> Seq.choose (fun forecastKey  ->
-          if githubMap.ContainsKey forecastKey then
-                  let g = githubMap.[forecastKey]
-                  let f = forecastMap.[forecastKey]
+      |> Seq.choose (fun projectId  ->
+          if githubMap.ContainsKey projectId then
+                  let g = githubMap.[projectId]
+                  let f = forecastMap.[projectId]
+                     
                   Some {
-                    forecastId = forecastKey
+                    forecastIds = forecastMap.[projectId] |> List.map (fun fp -> fp.id)
                     githubIssue = g.number
                     name = g.title
                     constraints = []
