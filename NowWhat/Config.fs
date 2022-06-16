@@ -24,7 +24,7 @@ let loadConfig () : Config =
     let homeDir = System.Environment.GetFolderPath System.Environment.SpecialFolder.UserProfile
     let pathToConfig = homeDir + "/" + ".config/nowwhat/secrets.json"
     if not (File.Exists pathToConfig) then
-      raise (LoadException "Secrets file not found")
+      raise (LoadException $"Secrets file not found at '{pathToConfig}'")
     else
 
     let maybeConfig = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
