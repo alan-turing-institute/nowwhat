@@ -4,9 +4,10 @@ open HttpFs.Client
 open Hopac
 open FSharp.Data
 open Thoth.Json.Net
+
 open NowWhat.Config
 
-(* ---------------------------------------------------------------------------------------------------
+(* -----------------------------------------------------------------------------
 
    GitHub data model
 
@@ -46,7 +47,8 @@ type IssueRoot = {
   issue: Issue_WIP;
 }
 
-(* ---------------------------------------------------------------------------------------------------
+(* -----------------------------------------------------------------------------
+         
    Get Forecast objects as F# types
    *)
 
@@ -88,7 +90,7 @@ let issueRootDecoder : Decoder<IssueRoot> =
     }
   )
 
-(* ---------------------------------------------------------------------------------------------------
+(* -----------------------------------------------------------------------------
 
    Interface to the GitHub API
 
@@ -122,12 +124,12 @@ let runGithubQuery (gitHubToken: string) body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
-(* ---------------------------------------------------------------------------------------------------
+(* -----------------------------------------------------------------------------
    Public interface to this module
 *)
 
 let getProjectIssues (projectName: string): Issue List =
-  // the parent function is only wrapping up the recursive call that deals with paging of the responses
+  // Wrap recursive call which handles paging of the responses
   let githubToken = match getSecrets () with
                     | Ok secrets -> secrets.githubToken
                     | Error err -> raise err
