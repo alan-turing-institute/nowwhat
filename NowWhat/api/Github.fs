@@ -132,7 +132,7 @@ let getProjectIssues (projectName: string): Issue List =
                     | Ok secrets -> secrets.githubToken
                     | Error err -> raise err
 
-  let rec getProjectIssues_page projectName cursor acc =
+  let rec getProjectIssues_page (projectName: string) cursor acc =
     let queryTemplate = System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
 
     // fill in placeholders into the query - project board name and cursor for paging
@@ -154,21 +154,16 @@ let getProjectIssues (projectName: string): Issue List =
     let issues = ProjectIssuesFromGraphQL.Parse result
     // run WIP implementation in parallel with old until migration-time
     let issues2 = result |> Decode.fromString projectRootDecoder
-    let issueData =
-      issues.Data.Repository.Projects.Edges
-      |> Array.exactlyOne
-      |> fun project ->
-        let projectName = project.Node.Name, project.Node.Number
-        let cards: (Issue * string) array =
-          project.Node.Columns.Edges
-          |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
-            id = x.Node.Id;
-            number = x.Node.Content.Number;
-            title = x.Node.Content.Title;
-            body = x.Node.Content.Body;
-            state = x.Node.Content.State
-          }, x.Cursor)) )
-        cards
+    let project = (issues.Data.Repository.Projects.Edges |> Array.exactlyOne).Node
+    let issueData: (Issue * string) array =
+      project.Columns.Edges
+      |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
+        id = x.Node.Id;
+        number = x.Node.Content.Number;
+        title = x.Node.Content.Title;
+        body = x.Node.Content.Body;
+        state = x.Node.Content.State
+      }, x.Cursor)) )
 
     // Cursor points to the last item returned, used for paging of the requests
     let nextCursor =
@@ -180,7 +175,7 @@ let getProjectIssues (projectName: string): Issue List =
           |> fun (_, c) -> Some c
 
     match nextCursor with
-    | Some _ -> getProjectIssues_page projectName nextCursor (Array.append acc issueData)
+    | Some _ -> getProjectIssues_page project.Name nextCursor (Array.append acc issueData)
     | None -> Array.append acc issueData
 
   getProjectIssues_page projectName None [||] |> Array.map fst |> Array.toList
