@@ -146,15 +146,6 @@ let getProjectIssues (projectName: string): Issue List =
       | Error _ -> failwith "Failed to decode"
     let project = (issues.Data.Repository.Projects.Edges |> Array.exactlyOne).Node
     let issueData: (Issue * string) List =
-      project.Columns.Edges
-      |> Array.collect (fun c -> c.Node.Cards.Edges |> Array.map (fun x -> ({
-        number = x.Node.Content.Number;
-        title = x.Node.Content.Title;
-        body = x.Node.Content.Body;
-        state = x.Node.Content.State
-      }, x.Cursor)) )
-      |> Array.toList
-    let issueData2: (Issue * string) List =
       List.map (fun column -> column.cards) issues2.projects.Head.columns
       |> List.concat
 
