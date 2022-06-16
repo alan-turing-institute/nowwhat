@@ -15,7 +15,7 @@ open NowWhat.Config
 /// There are currently **two** Issue types -- a placeholder (Issue) allowing work to continue on
 /// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
 /// which will eventually replace Issue.
-type Issue_WIP = {
+type Issue = {
   number: int
   title: string
   body: string
@@ -24,7 +24,7 @@ type Issue_WIP = {
 
 type Column = {
   name: string
-  cards: Issue_WIP List
+  cards: Issue List
 }
 
 type Project = {
@@ -37,24 +37,17 @@ type ProjectRoot = {
   projects: Project List
 }
 
-type Issue = {
-  number: int
-  title: string
-  body: string
-  state: string
-}
-
 (* ---------------------------------------------------------------------------------------------------
    Get Forecast objects as F# types
    *)
 
-let issueDecoder : Decoder<Issue_WIP> =
+let issueDecoder : Decoder<Issue> =
     Decode.object (
         fun get -> {
-            Issue_WIP.number = get.Required.At ["node"; "content"; "number"] Decode.int
-            Issue_WIP.title = get.Required.At ["node"; "content"; "title"] Decode.string
-            Issue_WIP.body = get.Required.At ["node"; "content"; "body"] Decode.string
-            Issue_WIP.state = get.Required.At ["node"; "content"; "state"] Decode.string
+            Issue.number = get.Required.At ["node"; "content"; "number"] Decode.int
+            Issue.title = get.Required.At ["node"; "content"; "title"] Decode.string
+            Issue.body = get.Required.At ["node"; "content"; "body"] Decode.string
+            Issue.state = get.Required.At ["node"; "content"; "state"] Decode.string
         }
     )
 
@@ -159,7 +152,7 @@ let getProjectIssues (projectName: string): Issue List =
         body = x.Node.Content.Body;
         state = x.Node.Content.State
       }, x.Cursor)) )
-    let issueData2: Issue_WIP List =
+    let issueData2: Issue List =
       List.map (fun column -> column.cards) issues2.projects.Head.columns
       |> List.concat
 
