@@ -2,7 +2,6 @@ module NowWhat.API.Github
 
 open HttpFs.Client
 open Hopac
-open FSharp.Data
 open Thoth.Json.Net
 open NowWhat.Config
 
@@ -12,9 +11,6 @@ open NowWhat.Config
 
 *)
 
-/// There are currently **two** Issue types -- a placeholder (Issue) allowing work to continue on
-/// the business/validation logic, and a WIP version (Issue_WIP) deserialised from the GraphQL API,
-/// which will eventually replace Issue.
 type Issue = {
   number: int
   title: string
@@ -82,16 +78,8 @@ let projectRootDecoder : Decoder<ProjectRoot> =
 
 *)
 
-type ProjectIssuesFromGraphQL = JsonProvider<"api/sample-json/gh-project-issues.json">
-
 let [<Literal>] GithubGraphQLEndpoint = "https://api.github.com/graphql"
-
 let [<Literal>] ProjectBoard = "Project Tracker"
-let [<Literal>] StandingRoles = "Standing Roles"
-let allProjectBoards = [
-  ProjectBoard
-  StandingRoles
-]
 
 // TODO: async?
 /// Query Github GraphQL endpoint
@@ -136,17 +124,12 @@ let getProjectIssues (projectName: string): Issue List =
       |> formatQuery
 
     let result = runGithubQuery githubToken query
-
-    // parse the response using the type provider
-    let issues = ProjectIssuesFromGraphQL.Parse result
-    // run WIP implementation in parallel with old until migration-time
-    let issues2: ProjectRoot =
+    let issues: ProjectRoot =
       match result |> Decode.fromString projectRootDecoder with
       | Ok issues -> issues
       | Error _ -> failwith "Failed to decode"
-    let project = (issues.Data.Repository.Projects.Edges |> Array.exactlyOne).Node
     let issueData: (Issue * string) List =
-      List.map (fun column -> column.cards) issues2.projects.Head.columns
+      List.map (fun column -> column.cards) issues.projects.Head.columns
       |> List.concat
 
     // Cursor points to the last item returned, used for paging of the requests
@@ -159,7 +142,7 @@ let getProjectIssues (projectName: string): Issue List =
           |> fun (_, c) -> Some c
 
     match nextCursor with
-    | Some _ -> getProjectIssues_page project.Name nextCursor (List.append acc issueData)
+    | Some _ -> getProjectIssues_page projectName nextCursor (List.append acc issueData)
     | None -> List.append acc issueData
 
   getProjectIssues_page projectName None [] |> List.map fst
