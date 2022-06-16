@@ -95,7 +95,6 @@ let issueRootDecoder : Decoder<IssueRoot> =
 *)
 
 type ProjectIssuesFromGraphQL = JsonProvider<"api/sample-json/gh-project-issues.json">
-type IssueDetailsFromGraphQL = JsonProvider<"api/sample-json/gh-issue-details.json">
 
 let [<Literal>] GithubGraphQLEndpoint = "https://api.github.com/graphql"
 
@@ -179,18 +178,3 @@ let getProjectIssues (projectName: string): Issue List =
     | None -> Array.append acc issueData
 
   getProjectIssues_page projectName None [||] |> Array.map fst |> Array.toList
-
-// Currently unused
-let getIssueDetails (gitHubToken: string) issueNumber =
-    let queryTemplate = System.IO.File.ReadAllText "api/queries/issue-details-graphql.json"
-
-    // fill in placeholders into the query - issue number
-    let query =
-      queryTemplate.Replace("ISSUENUMBER", $"{issueNumber}")
-      |> formatQuery
-
-    let result = runGithubQuery gitHubToken query
-
-    // parse the response using the type provider
-    let issues = IssueDetailsFromGraphQL.Parse result
-    issues.Data.Repository.Issue
