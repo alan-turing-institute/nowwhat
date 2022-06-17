@@ -24,7 +24,7 @@ let [<Literal>] TimeOffProjectId = 1684536
 /// Regular expression to match valid project codes
 let [<Literal>] rxCode = "^hut23-(\d+)$"
 
-// ERROR CHECK: Check that every project has an issue number of the correct form.
+// CHECK: Check that every project has an issue number of the correct form.
 
 let validateProject (p : Forecast.Project) : Result<Project, Forecast.Project> =
     match p.code with
@@ -37,6 +37,8 @@ let validateProject (p : Forecast.Project) : Result<Project, Forecast.Project> =
         | None ->
             Error p
 
+/// Obtain and validate projects from Forecast.
+/// Excludes archived projects and the "Time Off" hardcoded project.
 let getProjects () =
     // Accumulate a pair of (valid projects, invalid projects)
     let forecastProjects =

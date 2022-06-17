@@ -6,12 +6,16 @@ category: Design
 ## Consistency checking
 
 When I start the board solve, the current state of the project plan is typically
-invalid in one of several ways. Here are a set of claims which should be true
-but typically are not. 
+invalid in one of several ways. Some of those ways are critical to nowwhat being
+able to proceed; others are merely warnings. 
+
+### Panics
+
+The system should panic, emit messages, and stop if any of these are not true.
 
 1. Every Project in Forecast has a GitHub issue number in the “code” field, of
    the form `hut23-nnn`.
-   - Except there is a single, hard-coded project about time off or something.
+   - Except there is a single, hard-coded project "Time Off".
 
 2. Each Forecast Project should exist on GitHub as an issue;
    - and all these issues should be in the “Project Tracker”
@@ -22,16 +26,14 @@ but typically are not.
    - Finding people
    must be a Project on Forecast.
    
-4. Allocations of Forecast should have a Finance code (or the Project has a
-   single Finance code).
-
-5. Projects that are Active or Awaiting start should have allocations (past and
-   future) whose total resource is close to, but does not exceed, the resource
-   requirements.
+### Warnings
    
-6. The total allocation to a Finance code, in a Forecast project, past and
-   future, is “about equal” to the total resource required and is anywy not
-   greater than it. “About equal” means “within 1 FTE-week.”.
+1. Each project on Forecast should have a single Finance code (in the "Project
+   Tags" field).
+
+2. Projects that are Active or Awaiting start should have Finance code
+   allocations (past and future) whose total resource is close to, but does not
+   exceed, the resource requirements.
    
 ## Convenience reporting
 
