@@ -53,9 +53,6 @@ let lazyConfig =
 
 /// Return server credentials from either environment variables (if defined) or
 /// a config file. The file will only be read once.
-let getConfig (): Result<Config, exn> =
-    try
-      let config = lazyConfig.Force()
-      Ok config
-    with
-    | e -> Error e
+let getConfig () = 
+      lazyConfig.Force()
+      

@@ -95,10 +95,7 @@ let formatQuery (q: string) = q.Replace("\n", "")
 
 let getProjectIssues (projectName: string) : Issue List =
     // the parent function is only wrapping up the recursive call that deals with paging of the responses
-    let githubToken =
-        match getConfig () with
-        | Ok secrets -> secrets.githubToken
-        | Error err -> raise err
+    let githubToken = (getConfig ()).githubToken 
 
     let rec getProjectIssues_page (projectName: string) cursor (acc: (Issue * string) List) =
         let queryTemplate =
