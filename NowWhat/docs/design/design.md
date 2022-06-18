@@ -11,7 +11,7 @@ able to proceed; others are merely warnings.
 
 ### Panics
 
-The system should panic, emit messages, and stop if any of these are not true.
+The system should panic, emit panic messages, and stop if any of these are not true.
 
 1. Every Project in Forecast has a GitHub issue number in the “code” field, of
    the form `hut23-nnn`.
@@ -20,18 +20,28 @@ The system should panic, emit messages, and stop if any of these are not true.
 2. Each Forecast Project should exist on GitHub as an issue;
    - and all these issues should be in the “Project Tracker”
    
-3. Each GitHub issue in 
+### Errors 
+
+Errors are inconcistencies in our schedule that should be addressed as soon as
+possible. 
+   
+1. Each GitHub issue in 
    - Active;
    - Awaiting start; or
    - Finding people
    must be a Project on Forecast.
    
-### Warnings
-   
-1. Each project on Forecast should have a single Finance code (in the "Project
+2. Each project on Forecast should have a single Finance code (in the "Project
    Tags" field).
 
-2. Projects that are Active or Awaiting start should have Finance code
+3. Each GitHub issue should have a complete set of YAML metadata.
+
+### Warnings
+
+Warngins are informative messages that someone will need to look at (eg, when
+doing the board solve).
+
+1. Projects that are Active or Awaiting start should have Finance code
    allocations (past and future) whose total resource is close to, but does not
    exceed, the resource requirements.
    

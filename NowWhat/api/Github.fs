@@ -6,10 +6,16 @@ open Thoth.Json.Net
 
 open NowWhat.Config
 
+[<Literal>]
+let GithubGraphQLEndpoint = "https://api.github.com/graphql"
+
+[<Literal>]
+let ProjectBoard = "Project Tracker"
+
+
+
 (* -----------------------------------------------------------------------------
-
-   GitHub data model
-
+   GitHub GraphQL data model
 *)
 
 type Issue =
@@ -30,26 +36,26 @@ type Project =
 type ProjectRoot = { projects: Project List }
 
 (* -----------------------------------------------------------------------------
-   Get Forecast objects as F# types
-   *)
+   JSON decoder utilities
+*)
 
 let issueDecoder: Decoder<Issue * string> =
     Decode.object (fun get ->
         ({ Issue.number = get.Required.At [ "node"; "content"; "number" ] Decode.int
-           Issue.title = get.Required.At [ "node"; "content"; "title" ] Decode.string
-           Issue.body = get.Required.At [ "node"; "content"; "body" ] Decode.string
-           Issue.state = get.Required.At [ "node"; "content"; "state" ] Decode.string },
+           Issue.title  = get.Required.At [ "node"; "content"; "title" ] Decode.string
+           Issue.body   = get.Required.At [ "node"; "content"; "body" ] Decode.string
+           Issue.state  = get.Required.At [ "node"; "content"; "state" ] Decode.string },
          get.Required.Field "cursor" Decode.string))
 
 let columnDecoder: Decoder<Column> =
     Decode.object (fun get ->
-        { Column.name = get.Required.At [ "node"; "name" ] Decode.string
+        { Column.name  = get.Required.At [ "node"; "name" ] Decode.string
           Column.cards = get.Required.At [ "node"; "cards"; "edges" ] (Decode.list issueDecoder) })
 
 let projectDecoder: Decoder<Project> =
     Decode.object (fun get ->
-        { Project.number = get.Required.At [ "node"; "number" ] Decode.int
-          Project.name = get.Required.At [ "node"; "name" ] Decode.string
+        { Project.number  = get.Required.At [ "node"; "number" ] Decode.int
+          Project.name    = get.Required.At [ "node"; "name" ] Decode.string
           Project.columns = get.Required.At [ "node"; "columns"; "edges" ] (Decode.list columnDecoder) })
 
 let projectRootDecoder: Decoder<ProjectRoot> =
@@ -63,19 +69,12 @@ let projectRootDecoder: Decoder<ProjectRoot> =
                 (Decode.list projectDecoder) })
 
 (* -----------------------------------------------------------------------------
-   Interface to the GitHub API
-
+   GitHub API
 *)
 
-[<Literal>]
-let GithubGraphQLEndpoint = "https://api.github.com/graphql"
 
-[<Literal>]
-let ProjectBoard = "Project Tracker"
-
-// TODO: async?
 /// Query Github GraphQL endpoint
-/// body is json with GraphQL query element
+/// body should be a json-encoded GraphQL query element
 /// https://docs.github.com/en/graphql/guides/forming-calls-with-graphql#communicating-with-graphql
 let runGithubQuery (gitHubToken: string) body =
     GithubGraphQLEndpoint
@@ -89,53 +88,79 @@ let runGithubQuery (gitHubToken: string) body =
 // Format JSON query to enable correct parsing on Github's side
 let formatQuery (q: string) = q.Replace("\n", "")
 
+let getProjectIssues (tkn: string) (projectName: string) : Map<string, Issue list> =
+    // Wrap up the recursive call that deals with paging of the responses
+
+    // Well, this is a bodge. The GraphQL query is its own language. We load a
+    // template query from a file and then replace certain keywords with
+    // parameters.
+    let baseQueryTemplate =
+        System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
+
+    let queryTemplate =
+        baseQueryTemplate.Replace("PROJECTNAME", $"\\\"{projectName}\\\"")
+
+    // Get the next set of issues (from curso) from GitHub
+    let downloadIssues cursor =
+        // Replace placeholders in query and make GraphQL request 
+        let result =
+            match cursor with
+            | None ->
+                // Get initial batch
+                queryTemplate.Replace("CURSOR", "null")
+            | Some crs ->
+                // Get subsequent batches
+                queryTemplate.Replace("CURSOR", $"\\\"{crs}\\\"")
+            |> formatQuery
+            |> (runGithubQuery tkn)
+
+        // Decode returned JSON
+        match Decode.fromString projectRootDecoder result with
+            | Ok root -> root.projects.Head.columns
+            | Error err -> failwith ("Failed to decode GraphQL response from GitHub:\n" + err)
+        
+
+    let rec getProjectIssues_page cursor (acc: Map<string, Issue list>) =
+        // Add the issues in each column to the column map, keeping track of (a)
+        // how many issues we've seen (to know when to stop paging) and (b) the
+        // last cursor.
+        let updateColMap (colMap, countOfIssues, lastCursor) column =
+            match column.cards with
+                | [] ->
+                    (colMap, countOfIssues, lastCursor)
+                | cards ->
+                    let issues = List.map (fun (issue, _) -> issue) cards  
+
+                    (Map.change
+                        column.name
+                        (fun value ->
+                             match value with
+                             | None -> Some issues
+                             | Some is -> Some (List.append issues is))
+                         colMap,
+                     countOfIssues + List.length issues,
+                     Some (snd (List.last cards))
+                    ) 
+
+        // columns is a list of Column, and a Column is a list of (issue,
+        // cursor). We want the last cursor. The last page has
+        // been returned when all the columns are the empty list.
+        let (colMap, N, crs) =
+            List.fold updateColMap (acc, 0, cursor) (downloadIssues cursor)
+
+        if N = 0 then
+            colMap
+        else
+            getProjectIssues_page crs colMap
+
+    getProjectIssues_page None Map.empty
+    
+
 (* -----------------------------------------------------------------------------
-   Public interface to this module
+  External API
 *)
 
-let getProjectIssues (projectName: string) : Issue List =
-    // the parent function is only wrapping up the recursive call that deals with paging of the responses
-    let githubToken = (getConfig ()).githubToken 
-
-    let rec getProjectIssues_page (projectName: string) cursor (acc: (Issue * string) List) =
-        let queryTemplate =
-            System.IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/queries/issues-by-project-graphql.json"
-
-        // fill in placeholders into the query - project board name and cursor for paging
-        let query =
-            let cursorQuery =
-                match cursor with
-                | None ->
-                    // Get first batch
-                    queryTemplate.Replace("CURSOR", "null")
-                | Some crs ->
-                    // Get subsequent batches
-                    queryTemplate.Replace("CURSOR", $"\\\"{crs}\\\"")
-
-            cursorQuery.Replace("PROJECTNAME", $"\\\"{projectName}\\\"")
-            |> formatQuery
-
-        let result = runGithubQuery githubToken query
-
-        let issues: ProjectRoot =
-            match result |> Decode.fromString projectRootDecoder with
-            | Ok issues -> issues
-            | Error _ -> failwith "Failed to decode"
-
-        let issueData: (Issue * string) List =
-            List.map (fun column -> column.cards) issues.projects.Head.columns
-            |> List.concat
-
-        // Cursor points to the last item returned, used for paging of the requests
-        let nextCursor =
-            if issueData.Length = 0 then
-                None
-            else
-                issueData |> List.last |> (fun (_, c) -> Some c)
-
-        match nextCursor with
-        | Some _ -> getProjectIssues_page projectName nextCursor (List.append acc issueData)
-        | None -> List.append acc issueData
-
-    getProjectIssues_page projectName None []
-    |> List.map fst
+/// Return a list of columns, each with a list of issues
+let getIssues () =
+    let githubToken = (getConfig ()).githubToken
+    getProjectIssues githubToken ProjectBoard
