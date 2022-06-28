@@ -10,10 +10,10 @@ let nowwhat argv =
   try
     printfn "Now what?"
 
-    let gitHubIssues = Github.getProjectIssues "Project Tracker"
+    let gitHubIssues = Github.getProjectIssues "Project Tracker" |> Async.RunSynchronously
     printfn $"Number of issues in GitHub: over {roundToNearest (gitHubIssues |> Seq.length) 100}"
 
-    let forecastProjects = Forecast.getProjects ()
+    let forecastProjects = Forecast.getProjects () |> Async.RunSynchronously
     printfn $"Number of projects in Forecast: over {roundToNearest (forecastProjects |> Seq.length) 100}"
 
     // for p in forecastProjects do

@@ -43,14 +43,14 @@ let ``End-to-end test with environment variables`` (fileNameStub: string) : unit
 let ``test Forecast JSON deserialisation`` (jsonFileName: string) : unit =
     let expected =
         { Forecast.Root.projects =
-            [ { id = 1684536
-                harvestId = None
-                clientId = None
-                name = "Time Off"
-                code = None
-                tags = []
-                notes = None
-                isArchived = false } ] }
+            [ { Id = 1684536
+                HarvestId = None
+                ClientId = None
+                Name = "Time Off"
+                Code = None
+                Tags = []
+                Notes = None
+                IsArchived = false } ] }
 
     let rootJson = File.ReadAllText($"{fixtureDir}/{jsonFileName}")
 
@@ -64,16 +64,16 @@ let ``test Forecast JSON deserialisation`` (jsonFileName: string) : unit =
 [<Theory>]
 [<InlineData("GithubProjectsSerialised.json")>]
 let ``test Github Project Columns JSON deserialisation`` (jsonFileName: string): unit =
-    let expected = { Github.ProjectRoot.projects = [{
-        number = 2
-        name = "Project Tracker"
-        columns = [{
-          name = "Suggested"
-          cards = [({
-            number = 1
-            title = "Some project name here"
-            body = "Some project description here"
-            state = "OPEN"
+    let expected = { Github.ProjectRoot.Projects = [{
+        Number = 2
+        Name = "Project Tracker"
+        Columns = [{
+          Name = "Suggested"
+          Cards = [({
+            Number = 1
+            Title = "Some project name here"
+            Body = "Some project description here"
+            State = "OPEN"
           }, "MQ")]
         }]
     }]}

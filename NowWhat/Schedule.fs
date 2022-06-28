@@ -24,10 +24,11 @@ let [<Literal>] TimeOffProjectId = 1684536
 /// Regular expression to match valid project codes
 let [<Literal>] rxCode = "^hut23-(\d+)$"
 
+
 // CHECK: Check that every project has an issue number of the correct form.
 
 let validateProject (p : Forecast.Project) : Result<Project, Forecast.Project> =
-    match p.code with
+    match p.Code with
         | Some code ->
             let m = Regex.Match(code, rxCode) 
             if m.Groups.Count = 2 then
@@ -41,18 +42,19 @@ let validateProject (p : Forecast.Project) : Result<Project, Forecast.Project> =
 /// Excludes archived projects and the "Time Off" hardcoded project.
 let getProjects () =
     // Accumulate a pair of (valid projects, invalid projects)
+
     let forecastProjects =
         Forecast.getProjects ()
-        |> List.filter (fun p -> not p.isArchived)
-        |> List.filter (fun p -> p.id <> TimeOffProjectId)
-        |> List.map validateProject
+        |> Async.RunSynchronously
+        |> List.filter (fun p -> (not p.IsArchived) && (p.Id <> TimeOffProjectId))
         |> List.fold
-            (fun ps p ->
-                match p with
-                | Ok p -> (p :: fst ps, snd ps)
-                | Error p -> (fst ps, p :: snd ps))
-            ([], [])
-            
+            (fun (okProjects, errorProjects) project ->
+                match validateProject project with
+                | Ok p -> (p :: okProjects, errorProjects)
+                | Error p -> (okProjects, p :: errorProjects)
+                )
+            ([], [])      
+  
     let badProjects = snd forecastProjects
     if List.isEmpty badProjects then
         fst forecastProjects
@@ -64,7 +66,7 @@ let getProjects () =
                 | Some c -> string c
 
         badProjects
-        |> List.map (fun p -> $"{p.id} [{ppCode p.code}] \"{p.name}\"")
+        |> List.map (fun p -> $"{p.Id} [{ppCode p.Code}] \"{p.Name}\"")
         |> String.concat "\n"
         |> printfn "%s"
 

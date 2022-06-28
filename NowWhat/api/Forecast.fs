@@ -15,14 +15,14 @@ exception UnauthorisedException of string
 
 *)
 type Project =
-    { id: int
-      harvestId: int option
-      clientId: int option
-      name: string
-      code: string option
-      tags: string list
-      notes: string option
-      isArchived: bool }
+    { Id: int
+      HarvestId: int option
+      ClientId: int option
+      Name: string
+      Code: string option
+      Tags: string list
+      Notes: string option
+      IsArchived: bool }
 
 // Can we elide this?
 type Root = { projects: Project List }
@@ -33,14 +33,14 @@ type Root = { projects: Project List }
 
 let projectDecoder: Decoder<Project> =
     Decode.object (fun get ->
-        { Project.id = get.Required.Field "id" Decode.int
-          Project.harvestId = get.Optional.Field "harvest_id" Decode.int
-          Project.clientId = get.Optional.Field "client_id" Decode.int
-          Project.name = get.Required.Field "name" Decode.string
-          Project.code = get.Optional.Field "code" Decode.string
-          Project.tags = get.Required.Field "tags" (Decode.list Decode.string)
-          Project.notes = get.Optional.Field "notes" Decode.string
-          Project.isArchived = get.Required.Field "archived" Decode.bool })
+        { Project.Id = get.Required.Field "id" Decode.int
+          Project.HarvestId = get.Optional.Field "harvest_id" Decode.int
+          Project.ClientId = get.Optional.Field "client_id" Decode.int
+          Project.Name = get.Required.Field "name" Decode.string
+          Project.Code = get.Optional.Field "code" Decode.string
+          Project.Tags = get.Required.Field "tags" (Decode.list Decode.string)
+          Project.Notes = get.Optional.Field "notes" Decode.string
+          Project.IsArchived = get.Required.Field "archived" Decode.bool })
 
 let rootDecoder: Decoder<Root> =
     Decode.object (fun get -> { Root.projects = get.Required.Field "projects" (Decode.list projectDecoder) })
@@ -53,18 +53,21 @@ let rootDecoder: Decoder<Root> =
 [<Literal>]
 let ForecastUrl = "https://api.forecastapp.com/"
 
-let forecastRequest (endpoint: string) : string =
+let forecastRequest (endpoint: string) = async {
 
     let secrets = getConfig () 
 
     let response =
         Request.createUrl Get (ForecastUrl + endpoint)
-        |> Request.setHeader (Authorization("Bearer " + secrets.forecastToken))
-        |> Request.setHeader (Custom("Forecast-Account-ID", secrets.forecastId))
+        |> Request.setHeader (Authorization("Bearer " + secrets.ForecastToken))
+        |> Request.setHeader (Custom("Forecast-Account-ID", secrets.ForecastId))
         |> getResponse
         |> run
 
-    let responseBody = response |> Response.readBodyAsString |> run
+    let responseBody = 
+      response 
+      |> Response.readBodyAsString 
+      |> run
 
     if (response.statusCode < 200)
        || (response.statusCode > 299) then
@@ -79,7 +82,8 @@ let forecastRequest (endpoint: string) : string =
                 FailedException $"Forecast request failed. Status code: {response.statusCode}; Message: {responseBody}"
             )
 
-    responseBody
+    return responseBody
+}
 
 (* -----------------------------------------------------------------------------
    Public interface to this module
@@ -87,9 +91,12 @@ let forecastRequest (endpoint: string) : string =
 
 // Other useful endpoints are: people; assignments; clients; placeholders.
 
-let getProjects () : Project list =
-    match forecastRequest "projects"
-          |> Decode.fromString rootDecoder
-        with
-    | Ok root -> root.projects
-    | Error _ -> failwith "Unable to deserialise Forecast response."
+let getProjects ()  = async {
+    let! forecastResult = forecastRequest "projects" 
+  
+    match forecastResult |> Decode.fromString rootDecoder with
+    | Ok root -> return root.projects
+    | Error _ -> 
+      failwith "Unable to deserialise Forecast response."
+      return []
+}

@@ -15,9 +15,9 @@ open System.IO
 exception LoadException of string
 
 type Config =
-    { githubToken   : string
-      forecastId    : string
-      forecastToken : string
+    { GithubToken   : string
+      ForecastId    : string
+      ForecastToken : string
   }
 
 let loadConfig () : Config =
@@ -26,7 +26,7 @@ let loadConfig () : Config =
     if not (File.Exists pathToConfig) then
       raise (LoadException $"Secrets file not found at '{pathToConfig}'")
     else
-      let maybeConfig = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig)
+      let maybeConfig = Decode.Auto.fromString<Config>(File.ReadAllText pathToConfig, CaseStrategy.CamelCase)
       match maybeConfig with
         | Ok config -> config
         | Error err -> raise (LoadException err)
@@ -37,15 +37,15 @@ let loadConfig () : Config =
 let lazyConfig =
     lazy (
         let config =
-            { forecastId = System.Environment.GetEnvironmentVariable("FORECAST_ID")
-              forecastToken = System.Environment.GetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN")
-              githubToken = System.Environment.GetEnvironmentVariable("NOWWHAT_GITHUB_TOKEN")
+            { ForecastId = System.Environment.GetEnvironmentVariable("FORECAST_ID")
+              ForecastToken = System.Environment.GetEnvironmentVariable("NOWWHAT_FORECAST_TOKEN")
+              GithubToken = System.Environment.GetEnvironmentVariable("NOWWHAT_GITHUB_TOKEN")
           }
 
         // printfn $"config.forecastId: '{config.forecastId}'"
         // printfn $"config.forecastToken: '{config.forecastToken}'"
         // printfn $"config.githubToken: '{config.githubToken}'"
-        if (config.forecastId = null || config.forecastToken = null || config.githubToken = null) then
+        if (config.ForecastId = null || config.ForecastToken = null || config.GithubToken = null) then
            loadConfig ()
         else
            config
