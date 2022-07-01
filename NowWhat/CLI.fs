@@ -22,10 +22,10 @@ let nowwhat argv =
     0
 
   with
-    | Forecast.UnauthorisedException(string) ->
+    | ForecastRaw.UnauthorisedException(string) ->
       printfn $"Error in Forecast authorisation: {string}"
       -1
-    | Forecast.FailedException(string) ->
+    | ForecastRaw.FailedException(string) ->
       printfn $"Error retrieving Forecast data: {string}"
       -2
     | Config.LoadException(string) ->

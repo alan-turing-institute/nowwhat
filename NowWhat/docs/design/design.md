@@ -6,8 +6,40 @@ category: Design
 ## Consistency checking
 
 When I start the board solve, the current state of the project plan is typically
-invalid in one of several ways. Some of those ways are critical to nowwhat being
-able to proceed; others are merely warnings. 
+invalid in one of several ways. Some of those ways indicate a fundamental
+inconsistency in the "distributed database" of Forecast and GitHub: we call
+these "panics." Others occur when the database is consistent but in an invalid
+state: these are "errors". Finally, sometimes we just need some more information
+but we can proceed: these are "warnings". 
+
+Errors and warnings might go the console but they might also be posted on Slack;
+or added to the GitHub issue of the appropriate project. 
+
+| System   | Problem                                      | Level   | Who to notify |
+|----------+----------------------------------------------+---------+---------------|
+| Forecast | No project code                              | Panic   |               |
+| Forecast | Invalid project code                         | Panic   |               |
+| Both     | Missing Finance code and project has started | ??      |               |
+| Forecast | Multiple Finance codes                       | Error   |               |
+| Forecast | Finance code doesn't look like one           | Warning |               |
+|----------+----------------------------------------------+---------+---------------|
+| GitHub   |                                              |         |               |
+|          |                                              |         |               |
+|----------+----------------------------------------------+---------+---------------|
+| Both     | Forecast code not in GitHub                  | Error   |               |
+
+
+Ket to level:
+- Panic: Halt before attempting to merge GitHub and Forecast
+- Error: Halt after merging GitHub and Forecast 
+- Warning: Continue
+
+Key to "what to do":
+- F/PL: Find the "Client" on Forecast, look up the Programme Lead from the
+Standing Role tracker on GitHub and Slack them.
+- All: Slack #hut23. 
+- GH/P: Add a comment to the GitHub issue for this project
+
 
 ### Panics
 

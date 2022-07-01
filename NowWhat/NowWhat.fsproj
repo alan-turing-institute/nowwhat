@@ -6,8 +6,11 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DomainModel.fs" />
     <Compile Include="Config.fs" />
+    <Compile Include="Logging.fs" />
     <Compile Include="api/Github.fs" />
+    <Compile Include="api/ForecastRaw.fs" />
     <Compile Include="api/Forecast.fs" />
     <Compile Include="Schedule.fs" />
     <Compile Include="CLI.fs" />
